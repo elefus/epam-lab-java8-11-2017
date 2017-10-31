@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
+import lombok.NonNull;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -21,12 +22,8 @@ public class Exercise1 {
 
         Comparator<Person> comparatorByAge = new Comparator<Person>() {
             @Override
-            public int compare(Person left, Person right) {
-                int result;
-                if (left.getAge() > right.getAge()) result = 1;
-                else if (left.getAge() < right.getAge()) result = -1;
-                else return 0;
-                return result;
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                return Integer.compare(left.getAge(), right.getAge());
             }
         };
 
@@ -46,13 +43,10 @@ public class Exercise1 {
 
         Arrays.sort(persons, new Comparator<Person>() {
             @Override
-            public int compare(Person left, Person right) {
-                int result;
-                if (left.getAge() > right.getAge()) result = 1;
-                else if (left.getAge() < right.getAge()) result = -1;
-                else return 0;
-                return result;
-            }});
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                return Integer.compare(left.getAge(), right.getAge());
+            }
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -68,15 +62,12 @@ public class Exercise1 {
 
         Arrays.sort(persons, new Comparator<Person>() {
             @Override
-            public int compare(Person left, Person right) {
-                return left.getFirstName().compareTo(right.getFirstName());
-            }});
-
-        Arrays.sort(persons, new Comparator<Person>() {
-            @Override
-            public int compare(Person left, Person right) {
-                return left.getLastName().compareTo(right.getLastName());
-            }});
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                int lastNameCompare = left.getLastName().compareTo(right.getLastName());
+                if (lastNameCompare == 0) return left.getFirstName().compareTo(right.getFirstName());
+                return lastNameCompare;
+            }
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Алексей", "Доренко", 40),
