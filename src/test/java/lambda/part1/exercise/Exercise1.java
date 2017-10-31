@@ -93,7 +93,7 @@ public class Exercise1 {
         Predicate<Person> isAge30Checker = new Predicate<Person>() {
             @Override
             public boolean apply(Person p) {
-                return 30 == p.getAge();
+                return p != null && p.getAge() == 30;
             }
         };
 
@@ -111,7 +111,7 @@ public class Exercise1 {
                 .firstMatch(new Predicate<Person>() {
                     @Override
                     public boolean apply(Person p) {
-                        return 30 == p.getAge();
+                        return p != null && p.getAge() == 30;
                     }
                 });
 
