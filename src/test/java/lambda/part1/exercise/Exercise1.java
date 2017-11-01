@@ -1,6 +1,5 @@
 package lambda.part1.exercise;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
@@ -32,10 +31,10 @@ public class Exercise1 {
         Arrays.sort(persons, comparatorByAge);
 
         assertArrayEquals(new Person[]{
-                new Person("Иван", "Мельников", 20),
-                new Person("Николай", "Зимов", 30),
-                new Person("Алексей", "Доренко", 40),
-                new Person("Артем", "Зимов", 45)
+            new Person("Иван", "Мельников", 20),
+            new Person("Николай", "Зимов", 30),
+            new Person("Алексей", "Доренко", 40),
+            new Person("Артем", "Зимов", 45)
         }, persons);
     }
 
@@ -55,10 +54,10 @@ public class Exercise1 {
         });
 
         assertArrayEquals(new Person[]{
-                new Person("Иван", "Мельников", 20),
-                new Person("Николай", "Зимов", 30),
-                new Person("Алексей", "Доренко", 40),
-                new Person("Артем", "Зимов", 45)
+            new Person("Иван", "Мельников", 20),
+            new Person("Николай", "Зимов", 30),
+            new Person("Алексей", "Доренко", 40),
+            new Person("Артем", "Зимов", 45)
         }, persons);
     }
 
@@ -82,10 +81,10 @@ public class Exercise1 {
         });
 
         assertArrayEquals(new Person[]{
-                new Person("Алексей", "Доренко", 40),
-                new Person("Артем", "Зимов", 45),
-                new Person("Николай", "Зимов", 30),
-                new Person("Иван", "Мельников", 20)
+            new Person("Алексей", "Доренко", 40),
+            new Person("Артем", "Зимов", 45),
+            new Person("Николай", "Зимов", 30),
+            new Person("Иван", "Мельников", 20)
         }, persons);
     }
 
@@ -102,7 +101,7 @@ public class Exercise1 {
         Person person = FluentIterable.from(persons)
                 .firstMatch(is30AgeChecker).get();
 
-         assertEquals(new Person("Николай", "Зимов", 30), person);
+        assertEquals(new Person("Николай", "Зимов", 30), person);
     }
 
     @Test
@@ -121,10 +120,10 @@ public class Exercise1 {
 
     private Person[] getPersons() {
         return new Person[]{
-                new Person("Иван", "Мельников", 20),
-                new Person("Алексей", "Доренко", 40),
-                new Person("Николай", "Зимов", 30),
-                new Person("Артем", "Зимов", 45)
+            new Person("Иван", "Мельников", 20),
+            new Person("Алексей", "Доренко", 40),
+            new Person("Николай", "Зимов", 30),
+            new Person("Артем", "Зимов", 45)
         };
     }
 
