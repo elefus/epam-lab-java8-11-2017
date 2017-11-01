@@ -32,9 +32,9 @@ public class Example1 {
         Arrays.sort(persons, comparatorByLastName);
 
         assertArrayEquals(new Person[]{
-                new Person("Алексей", "Доренко", 40),
-                new Person("Николай", "Зимов", 30),
-                new Person("Иван", "Мельников", 20)
+            new Person("Алексей", "Доренко", 40),
+            new Person("Николай", "Зимов", 30),
+            new Person("Иван", "Мельников", 20)
         }, persons);
     }
 
@@ -52,9 +52,9 @@ public class Example1 {
         });
 
         assertArrayEquals(new Person[]{
-                new Person("Алексей", "Доренко", 40),
-                new Person("Николай", "Зимов", 30),
-                new Person("Иван", "Мельников", 20)
+            new Person("Алексей", "Доренко", 40),
+            new Person("Николай", "Зимов", 30),
+            new Person("Иван", "Мельников", 20)
         }, persons);
     }
 
@@ -93,7 +93,7 @@ public class Example1 {
             }
         };
         Optional<Person> personOptional = FluentIterable.from(persons)
-                .firstMatch(isFirstNameAlexChecker);
+                                                        .firstMatch(isFirstNameAlexChecker);
 
         if (personOptional.isPresent()) {
             System.out.println(personOptional.get());
@@ -106,12 +106,12 @@ public class Example1 {
         List<Person> persons = Arrays.asList(getPersons());
 
         Optional<Person> personOptional = FluentIterable.from(persons)
-                .firstMatch(new Predicate<Person>() {
-                    @Override
-                    public boolean apply(Person p) {
-                        return "Алексей".equals(p.getFirstName());
-                    }
-                });
+                                                        .firstMatch(new Predicate<Person>() {
+                                                            @Override
+                                                            public boolean apply(Person p) {
+                                                                return "Алексей".equals(p.getFirstName());
+                                                            }
+                                                        });
 
         if (personOptional.isPresent()) {
             System.out.println(personOptional.get());
@@ -123,7 +123,7 @@ public class Example1 {
     public void createMapFromListUsingForeach() {
         List<Person> persons = Arrays.asList(getPersons());
 
-        Map<String, Person> personByLastName = new HashMap<>(persons.size());
+        Map<String, Person> personByLastName = new HashMap<>();
         for (Person person : persons) {
             personByLastName.put(person.getLastName(), person);
         }
@@ -147,7 +147,7 @@ public class Example1 {
         };
         // Упадет, если одному ключу будет соответствовать два элемента.
         Map<String, Person> personByLastName = FluentIterable.from(persons)
-                .uniqueIndex(getLastNameFromPerson);
+                                                             .uniqueIndex(getLastNameFromPerson);
 
         Map<String, Person> expected = new HashMap<>(persons.size());
         expected.put("Мельников", new Person("Иван", "Мельников", 20));
@@ -161,12 +161,12 @@ public class Example1 {
         List<Person> persons = Arrays.asList(getPersons());
 
         Map<String, Person> personByLastName = FluentIterable.from(persons)
-                .uniqueIndex(new Function<Person, String>() {
-                    @Override
-                    public String apply(Person person) {
-                        return person.getLastName();
-                    }
-                });
+                                                             .uniqueIndex(new Function<Person, String>() {
+                                                                 @Override
+                                                                 public String apply(Person person) {
+                                                                     return person.getLastName();
+                                                                 }
+                                                             });
 
         Map<String, Person> expected = new HashMap<>(persons.size());
         expected.put("Мельников", new Person("Иван", "Мельников", 20));
@@ -177,9 +177,9 @@ public class Example1 {
 
     private Person[] getPersons() {
         return new Person[]{
-                new Person("Иван", "Мельников", 20),
-                new Person("Алексей", "Доренко", 40),
-                new Person("Николай", "Зимов", 30)
+            new Person("Иван", "Мельников", 20),
+            new Person("Алексей", "Доренко", 40),
+            new Person("Николай", "Зимов", 30)
         };
     }
 }
