@@ -1,8 +1,9 @@
 package lambda.part1.example;
 
-import lambda.data.Person;
+
 import org.junit.Test;
 
+import lambda.data.Person;
 import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
