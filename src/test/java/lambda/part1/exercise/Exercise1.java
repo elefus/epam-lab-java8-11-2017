@@ -67,9 +67,10 @@ public class Exercise1 {
             public int compare(@NonNull Person left, @NonNull Person right) {
 
                 int compareByLastName = left.getLastName().compareTo(right.getLastName());
-                int compareByFirstName = left.getFirstName().compareTo(right.getFirstName());
 
-                return (compareByLastName != 0) ? compareByLastName : compareByFirstName;
+
+                return (compareByLastName != 0) ? compareByLastName :
+                        left.getFirstName().compareTo(right.getFirstName());
 
             }
         });
