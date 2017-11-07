@@ -1,5 +1,8 @@
 package lambda.part1.example.interfaces;
 
+import java.util.HashMap;
+import java.util.Map;
+
 interface Left {
 
     int value = 100;
@@ -37,11 +40,13 @@ class GrandGrandChild extends GrandChild implements Left, Right {
 class Launcher2 {
 
     public static void main(String[] args) {
-//        GrandGrandChild grandGrandChild = new GrandGrandChild();
-//        System.out.println(grandGrandChild.getValue());
+        GrandGrandChild grandGrandChild = new GrandGrandChild();
+        System.out.println(grandGrandChild.getValue());
 
-//        Left left = grandGrandChild;
+        Left left = grandGrandChild;
 //        System.out.println(left.getValue());
+        System.out.println(Left.getValue());
+        System.out.println(Left.value);
 
 //        Right right = grandGrandChild;
 //        System.out.println(right.getValue());

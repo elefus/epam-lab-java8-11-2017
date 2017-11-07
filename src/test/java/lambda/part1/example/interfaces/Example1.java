@@ -45,5 +45,6 @@ class Launcher1 {
         parent = null;
         System.out.println("\n--- null ---");
         System.out.println(parent.getValue());
+        System.out.println(((GrandChild)null).getValue());
     }
 }
