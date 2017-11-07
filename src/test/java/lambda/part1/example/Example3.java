@@ -1,25 +1,12 @@
 package lambda.part1.example;
 
+import lambda.part1.example.interfaces.Summator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings({"Convert2Lambda", "FieldCanBeLocal", "CodeBlock2Expr"})
 public class Example3 {
-
-    /**
-     * SAM-interface, предназначенный для суммирования элементов.
-     * @param <T> Тип суммируемых элементов.
-     */
-    @FunctionalInterface
-    private interface Summator<T> {
-
-        T sum(T left, T right);
-
-        default T twice(T value) {
-            return sum(value, value);
-        }
-    }
 
     @Test
     public void anonymousClassImplementation() {
