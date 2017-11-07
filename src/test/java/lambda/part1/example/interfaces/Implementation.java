@@ -9,10 +9,18 @@ package lambda.part1.example.interfaces;
  * 3. Методы по умолчанию дают свободу классам выбрать метод, который нужно переопределить.
  *
  * 4. Метод по умолчанию не может переопределить метод класса java.lang.Object.
+ *
+ * @see <a href="https://habrahabr.ru/post/133907>Бинарная совместимость</a>
  */
-public class Implementation { // implements First, Second {
+public class Implementation implements First, Second {
+
 
     public static void main(String[] args) {
-//        System.out.println(new Implementation().getValue());
+        System.out.println(new Implementation().getValue());
+    }
+
+    @Override
+    public int getValue() {
+        return 0;
     }
 }
