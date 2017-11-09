@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @SuppressWarnings("unused")
-public class Lambdas9 {
+public class Example9 {
 
     private static class ComparatorPersonsByLastName implements Comparator<Person> {
 

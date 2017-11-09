@@ -4,7 +4,7 @@ import lambda.data.Person;
 import org.junit.Test;
 
 @SuppressWarnings("unused")
-public class Lambdas8 {
+public class Example8 {
 
     @FunctionalInterface
     private interface PersonFactory {

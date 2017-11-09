@@ -6,17 +6,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @SuppressWarnings({"unused", "ConstantConditions", "UnnecessaryLocalVariable"})
-public class Lambdas10 extends Thread {
+public class Example10 extends Thread {
 
     private List<String> strings = Arrays.asList("1", "2", "3");
 
     private byte[] veryBigField = new byte[100_000_000];
 
     public static void main(String[] args) throws InterruptedException {
-        Lambdas10 deadly = new Lambdas10();
+        Example10 deadly = new Example10();
         new Checker(deadly.getPredicateEnclosingField()).start();
 
-        Lambdas10 zombie = new Lambdas10();
+        Example10 zombie = new Example10();
         new Checker(zombie.getPredicateEnclosingThis()).start();
 
         TimeUnit.SECONDS.sleep(7);
