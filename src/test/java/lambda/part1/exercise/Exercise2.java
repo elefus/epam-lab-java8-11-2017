@@ -85,8 +85,7 @@ public class Exercise2 {
 
     @Test
     public void implementsStringMultiplierUsingObjectMethodReference() {
-        Exercise2 exercise2 = new Exercise2();
-        Multiplier<String> multiplier = exercise2::stringSumWithDelimiter;
+        Multiplier<String> multiplier = this::stringSumWithDelimiter;
 
         assertEquals("a-a-a", multiplier.multiply("a", 3));
         assertEquals("", multiplier.multiply("qwerty", 0));
