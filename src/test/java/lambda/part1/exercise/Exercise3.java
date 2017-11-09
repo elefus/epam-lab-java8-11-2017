@@ -6,7 +6,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.Objects.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -49,7 +51,7 @@ public class Exercise3 {
         List<Person> persons = Arrays.asList(getPersons());
 
         Person person = FluentIterable.from(persons)
-                .firstMatch(p -> 30 == p.getAge())
+                .firstMatch( aPerson -> nonNull(aPerson) && (aPerson.getAge() == 30) )
                 .get();
 
         assertEquals(new Person("Николай", "Зимов", 30), person);
