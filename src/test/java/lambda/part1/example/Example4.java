@@ -181,7 +181,7 @@ public class Example4 {
         assertEquals("...", firstName);
     }
 
-    public Person getPerson() {
+    private Person getPerson() {
         return person;
     }
 
