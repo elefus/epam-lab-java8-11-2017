@@ -74,7 +74,7 @@ public class Person implements Comparable<Person>, Serializable {
     }
 
     @Override
-    public String toString(Person this) {
+    public String toString() {
         return "Person@" + hashCode() + ": {"
              + "firstName='" + firstName + "', "
              + "lastName='" + lastName + "', "
