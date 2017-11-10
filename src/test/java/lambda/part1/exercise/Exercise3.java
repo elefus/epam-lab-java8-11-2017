@@ -1,5 +1,6 @@
 package lambda.part1.exercise;
 
+import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class Exercise3 {
 
     @Test
@@ -16,6 +18,7 @@ public class Exercise3 {
         Person[] persons = getPersons();
 
         // TODO использовать Arrays.sort + expression-lambda
+        Arrays.sort(persons, (a, b) -> Integer.compare(a.getAge(), b.getAge()));
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -30,6 +33,13 @@ public class Exercise3 {
         Person[] persons = getPersons();
 
         // TODO использовать Arrays.sort + statement-lambda
+        Arrays.sort(persons, (Person a, Person b) -> {
+            int lname = a.getLastName().compareTo(b.getLastName());
+
+            if(lname!=0) return lname;
+
+            return a.getFirstName().compareTo(b.getFirstName());
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Алексей", "Доренко", 40),
@@ -44,7 +54,13 @@ public class Exercise3 {
         List<Person> persons = Arrays.asList(getPersons());
 
         // TODO использовать FluentIterable
-        Person person = null;
+        Person person = FluentIterable.from(persons).firstMatch((Person p) -> {
+            if(p == null){
+                return false;
+            }else{
+                return 30 == p.getAge();
+            }
+        }).get();
 
         assertEquals(new Person("Николай", "Зимов", 30), person);
     }
