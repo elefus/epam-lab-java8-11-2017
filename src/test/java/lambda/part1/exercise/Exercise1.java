@@ -4,6 +4,7 @@ import lambda.data.Person;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -15,7 +16,15 @@ public class Exercise1 {
     public void sortPersonsByAgeUsingArraysSortComparator() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort
+        Comparator<Person> cmp = new Comparator<Person>() {
+
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.compareTo(o2);
+            }
+        };
+
+        Arrays.sort(persons, cmp);
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -30,6 +39,7 @@ public class Exercise1 {
         Person[] persons = getPersons();
 
         // TODO использовать Arrays.sort
+//        Arrays.sort(persons, )
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
