@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.concurrent.Callable;
 
 @SuppressWarnings("unused")
-public class Lambdas6 {
+public class Example6 {
 
     @Test
     public void runNormalRunnable() {

@@ -3,7 +3,7 @@ package lambda.part1.example;
 import org.junit.Test;
 
 @SuppressWarnings("unused")
-public class Lambdas7 {
+public class Example7 {
 
     @FunctionalInterface
     private interface Usable {
