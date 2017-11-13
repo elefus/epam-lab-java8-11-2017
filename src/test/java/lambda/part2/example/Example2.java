@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class Example2 {
 
     // (Person, Person -> String) -> (String -> boolean)
@@ -36,7 +37,13 @@ public class Example2 {
 
     // (Person -> String) -> (Person -> String -> boolean)
     private static Function<Person, Predicate<String>> stringPropertyChecker(Function<Person, String> propertyExtractor) {
-        return person -> checkingValue -> Objects.equals(propertyExtractor.apply(person), checkingValue);
+        return person -> {
+            Predicate<String> checker = checkingValue -> {
+                boolean isEquals = Objects.equals(propertyExtractor.apply(person), checkingValue);
+                return isEquals;
+            };
+            return checker;
+        };
     }
 
     @Test
