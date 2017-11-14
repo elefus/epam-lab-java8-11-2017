@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
-@SuppressWarnings({"ConstantConditions", "unused"})
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class Exercise1 {
 
     @Test

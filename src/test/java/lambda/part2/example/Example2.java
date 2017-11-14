@@ -12,13 +12,9 @@ import static org.junit.Assert.*;
 @SuppressWarnings("UnnecessaryLocalVariable")
 public class Example2 {
 
-    // (Person, Person -> String) -> (String -> boolean)
+    // (Person, (Person -> String)) -> (String -> boolean)
     private static Predicate<String> stringPropertyChecker(Person person, Function<Person, String> getProperty) {
-        // FIXME преобразовать в expression-lambda
-        return string -> {
-            String propertyValue = getProperty.apply(person);
-            return string.equals(propertyValue);
-        };
+        return string -> Objects.equals(string, getProperty.apply(person));
     }
 
     // (Person -> String) -> boolean
@@ -35,7 +31,7 @@ public class Example2 {
         assertTrue(checkFirstName.test("Иван"));
     }
 
-    // (Person -> String) -> (Person -> String -> boolean)
+    // (Person -> String) -> (Person -> (String -> boolean))
     private static Function<Person, Predicate<String>> stringPropertyChecker(Function<Person, String> propertyExtractor) {
         return person -> {
             Predicate<String> checker = checkingValue -> {
