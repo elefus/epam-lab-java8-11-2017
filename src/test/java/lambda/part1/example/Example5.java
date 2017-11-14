@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
-public class Lambdas5 {
+public class Example5 {
 
     private <T> String extractString(T value, Function<T, String> function) {
         return function.apply(value);

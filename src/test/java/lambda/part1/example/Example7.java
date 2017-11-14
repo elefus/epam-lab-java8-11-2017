@@ -3,7 +3,7 @@ package lambda.part1.example;
 import org.junit.Test;
 
 @SuppressWarnings("unused")
-public class Lambdas7 {
+public class Example7 {
 
     @FunctionalInterface
     private interface Usable {
@@ -21,21 +21,21 @@ public class Lambdas7 {
         usable.use();
     }
 
-    private void method() {
-        System.out.println("I'm just another non-static method");
+    private void doSomething() {
+        System.out.println("Не-статический метод doSomething");
     }
 
     @Test
     public void ambiguousMethodReference() {
-        Runnable runnable = () -> System.out.println("I'm runnable");
+        Runnable runnable = () -> System.out.println("Лямбда для Runnable");
         perform(runnable);
 
-        Usable usable = () -> System.out.println("I'm usable");
+        Usable usable = () -> System.out.println("Лямбда для Usable");
         perform(usable);
         
-        Runnable method = this::method;
+        Runnable method = this::doSomething;
         perform(method);
         
-//        perform(this::method);
+//        perform(this::doSomething);
     }
 }
