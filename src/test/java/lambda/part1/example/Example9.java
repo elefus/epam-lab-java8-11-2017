@@ -21,9 +21,9 @@ public class Example9 {
     @Test
     public void serializeTree() {
         Set<Person> treeSet = new TreeSet<>();
-        treeSet.add(new Person("b", "b", 2));
-        treeSet.add(new Person("a", "a", 1));
-        treeSet.add(new Person("c", "c", 3));
+        treeSet.add(new Person("Иван", "Мельников", 33));
+        treeSet.add(new Person("Алексей", "Игнатенко", 1));
+        treeSet.add(new Person("Сергей", "Лопатин", 3));
 
         System.out.println(treeSet);
 

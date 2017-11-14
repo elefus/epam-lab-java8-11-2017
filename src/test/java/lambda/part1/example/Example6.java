@@ -42,7 +42,7 @@ public class Example6 {
     @Test
     public void throwRuntimeExceptionFromRunnable() {
         ThrowableRunnable throwableRunnable = () -> {
-//            throw new IllegalStateException("Some runtime exception");
+//            throw new IllegalStateException("Какое-то исключение времени исполнения");
         };
 //        throwableRunnable.run();
     }
