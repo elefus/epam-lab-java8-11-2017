@@ -44,7 +44,9 @@ public class Exercise1 {
     }
 
     // TODO метод getFullName: Person -> String, извлекающий из объекта Person строку в формате "имя фамилия".
-     private static Function<Person, String> getFullName = p -> p.getFirstName() + p.getLastName();
+     private static Function<Person, String> getFullName(Person p) {
+        return p.getFirstName() + " " + p.getLastName();
+    }
 
     // TODO метод createExtractorAgeOfPersonWithTheLongestFullName: (Person -> String) -> ((Person, Person) -> int),
     // TODO - принимающий способ извлечения полного имени из объекта Person
@@ -65,7 +67,7 @@ public class Exercise1 {
         Person person2 = new Person("Илья", "Жирков", 22);
 
         // TODO воспользоваться ссылкой на метод getFullName
-        Function<Person, String> getFullName = Exercise1.getFullName;
+        Function<Person, String> getFullName = Exercise1::getFullName;
 
         // (Person, Person) -> Integer
         // TODO воспользоваться методом createExtractorAgeOfPersonWithTheLongestFullName
