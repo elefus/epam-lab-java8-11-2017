@@ -1,8 +1,10 @@
 package lambda.part2.exercise;
 
 import lambda.data.Person;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -31,7 +33,7 @@ public class Exercise1 {
 
         // TODO создать переменную sameAgesChecker: (Person, Person) -> boolean, используя BiPredicate
 
-        BiPredicate<Person, Person> sameAgesChecker = (first, second) -> Integer.compare(first.getAge(), second.getAge()) == 0;
+        BiPredicate<Person, Person> sameAgesChecker = (first, second) -> first.getAge() == second.getAge();
 
         assertTrue(sameAgesChecker.test(person1, person2));
         assertFalse(sameAgesChecker.test(person1, person3));
@@ -47,8 +49,9 @@ public class Exercise1 {
     // TODO - принимающий способ извлечения полного имени из объекта Person
     // TODO - возвращающий BiFunction, сравнивающий два объекта Person и возвращающий возраст того, чье полное имя длиннее.
      private static BiFunction<Person, Person, Integer> createExtractorAgeOfPersonWithTheLongestFullName(Function<Person, String> extractor) {
-        return (first, second) -> Integer.compare(extractor.apply(first).length(), (extractor.apply(second)).length()) > 0
-                ? first.getAge() : second.getAge();
+        return (first, second) -> extractor.apply(first).length() > (extractor.apply(second)).length()
+                ? first.getAge()
+                : second.getAge();
      }
 
     @Test
