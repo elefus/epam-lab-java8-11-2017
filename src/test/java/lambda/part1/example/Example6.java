@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.concurrent.Callable;
 
 @SuppressWarnings("unused")
-public class Lambdas6 {
+public class Example6 {
 
     @Test
     public void runNormalRunnable() {
@@ -42,7 +42,7 @@ public class Lambdas6 {
     @Test
     public void throwRuntimeExceptionFromRunnable() {
         ThrowableRunnable throwableRunnable = () -> {
-//            throw new IllegalStateException("Some runtime exception");
+//            throw new IllegalStateException("Какое-то исключение времени исполнения");
         };
 //        throwableRunnable.run();
     }
