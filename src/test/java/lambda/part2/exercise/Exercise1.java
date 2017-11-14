@@ -16,7 +16,7 @@ public class Exercise1 {
     public void ageExtractorFromPersonUsingMethodReference() {
         Person person = new Person("Иван", "Мельников", 33);
 
-        Function<Person, Integer> ageExtractor = p -> p.getAge();
+        Function<Person, Integer> ageExtractor = Person::getAge;
 
         assertEquals(33, ageExtractor.apply(person).intValue());
     }
@@ -27,20 +27,16 @@ public class Exercise1 {
         Person person2 = new Person("Дмитрий", "Гущин", 33);
         Person person3 = new Person("Илья", "Жирков", 22);
 
-        BiPredicate<Person, Person> sameAgesChecker = (p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()) == 0;
+        BiPredicate<Person, Person> sameAgesChecker = (p1, p2) -> p1.getAge() == p2.getAge();
     }
 
     private static String getFullName(Person person) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(person.getFirstName())
-                .append(" ")
-                .append(person.getLastName());
-        return sb.toString();
+        return person.getFirstName() + " " + person.getLastName();
     }
 
     private static BiFunction<Person, Person, Integer> createExtractorAgeOfPersonWithTheLongestFullName(Function<Person, String> f) {
          return (person1, person2) ->
-                 Integer.compare(f.apply(person1).length(), f.apply(person2).length()) > 0 ? person1.getAge() : person2.getAge();
+                 f.apply(person1).length() > f.apply(person2).length() ? person1.getAge() : person2.getAge();
     }
 
     @Test
