@@ -1,9 +1,14 @@
 package lambda.part1.exercise;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
+import lombok.NonNull;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -15,7 +20,14 @@ public class Exercise1 {
     public void sortPersonsByAgeUsingArraysSortComparator() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort
+        Comparator<Person> comparatorByAge = new Comparator<Person>() {
+            @Override
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                return Integer.compare(left.getAge(), right.getAge());
+            }
+        };
+
+        Arrays.sort(persons, comparatorByAge);
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -29,7 +41,12 @@ public class Exercise1 {
     public void sortPersonsByAgeUsingArraysSortAnonymousComparator() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort
+        Arrays.sort(persons, new Comparator<Person>() {
+            @Override
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                return Integer.compare(left.getAge(), right.getAge());
+            }
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -43,7 +60,14 @@ public class Exercise1 {
     public void sortPersonsByLastNameThenFirstNameUsingArraysSortAnonymousComparator() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort
+        Arrays.sort(persons, new Comparator<Person>() {
+            @Override
+            public int compare(@NonNull Person left, @NonNull Person right) {
+                int lastNameCompare = left.getLastName().compareTo(right.getLastName());
+                if (lastNameCompare == 0) return left.getFirstName().compareTo(right.getFirstName());
+                return lastNameCompare;
+            }
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Алексей", "Доренко", 40),
@@ -57,20 +81,32 @@ public class Exercise1 {
     public void findFirstWithAge30UsingGuavaPredicate() {
         List<Person> persons = Arrays.asList(getPersons());
 
-        // TODO использовать FluentIterable
-        Person person = null;
+        Predicate<Person> isAge30Checker = new Predicate<Person>() {
+            @Override
+            public boolean apply(Person p) {
+                return p != null && p.getAge() == 30;
+            }
+        };
 
-        assertEquals(new Person("Николай", "Зимов", 30), person);
+        Optional<Person> person = FluentIterable.from(persons)
+                .firstMatch(isAge30Checker);
+
+        assertEquals(new Person("Николай", "Зимов", 30), person.get());
     }
 
     @Test
     public void findFirstWithAge30UsingGuavaAnonymousPredicate() {
         List<Person> persons = Arrays.asList(getPersons());
 
-        // TODO использовать FluentIterable
-        Person person = null;
+        Optional<Person> person = FluentIterable.from(persons)
+                .firstMatch(new Predicate<Person>() {
+                    @Override
+                    public boolean apply(Person p) {
+                        return p != null && p.getAge() == 30;
+                    }
+                });
 
-        assertEquals(new Person("Николай", "Зимов", 30), person);
+        assertEquals(new Person("Николай", "Зимов", 30), person.get());
     }
 
     private Person[] getPersons() {
