@@ -28,7 +28,7 @@ public class Exercise1 {
 
         // TODO функция извлечения длины полного имени из сотрудника fullNameLengthExtractor: Employee -> Integer
         Function<Employee,Integer> fullNameLengthExtractor =
-                employee -> stringLengthExtractor.apply(fullNameExtractor.apply(employee));
+                employee -> fullNameExtractor.andThen(stringLengthExtractor).apply(employee);
 
         // TODO преобразование списка employees в lengths используя fullNameLengthExtractor
         for (Employee employee : employees) {
