@@ -1,5 +1,6 @@
 package lambda.part1.exercise;
 
+import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class Exercise3 {
     public void sortPersonsByAgeUsingArraysSortExpressionLambda() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort + expression-lambda
+        Arrays.sort(persons, (left, right) -> Integer.compare(left.getAge(), right.getAge()));
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -30,7 +31,13 @@ public class Exercise3 {
     public void sortPersonsByLastNameThenFirstNameUsingArraysSortExpressionLambda() {
         Person[] persons = getPersons();
 
-        // TODO использовать Arrays.sort + statement-lambda
+        Arrays.sort(persons, (left, right) -> {
+            int compareLastName = left.getLastName().compareTo(right.getLastName());
+            if (compareLastName == 0)
+                return left.getFirstName().compareTo(right.getFirstName());
+            else
+                return compareLastName;
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Алексей", "Доренко", 40),
@@ -44,8 +51,11 @@ public class Exercise3 {
     public void findFirstWithAge30UsingGuavaPredicateLambda() {
         List<Person> persons = Arrays.asList(getPersons());
 
-        // TODO использовать FluentIterable
-        Person person = null;
+        Person person = FluentIterable
+                .from(persons)
+                .firstMatch(
+                        p -> p != null && p.getAge() == 30
+                ).get();
 
         assertEquals(new Person("Николай", "Зимов", 30), person);
     }
