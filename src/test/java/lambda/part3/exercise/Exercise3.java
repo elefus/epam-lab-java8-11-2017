@@ -40,7 +40,7 @@ public class Exercise3 {
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> mapping) {
-            return new LazyMapHelper<>(source, t -> mapping.apply(this.mapping.apply(t)));
+            return new LazyMapHelper<>(source, this.mapping.andThen(mapping));
         }
     }
 
