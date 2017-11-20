@@ -3,7 +3,9 @@ package lambda.part1.example;
 import lambda.data.Person;
 import org.junit.Test;
 
-@SuppressWarnings("unused")
+import static org.junit.Assert.assertEquals;
+
+@SuppressWarnings({"unused", "Convert2MethodRef"})
 public class Example8 {
 
     @FunctionalInterface
@@ -12,13 +14,21 @@ public class Example8 {
         Person create(String name, String lastName, int age);
     }
 
-    private void withFactory(PersonFactory pf) {
-        System.out.println(pf.create("name", "lastName", 33));
+    @Test
+    public void factoryAsExpressionLambda() {
+        PersonFactory factory = (name, lastName, age) -> new Person(name, lastName, age);
+
+        Person actual = factory.create("Иван", "Мельников", 33);
+
+        assertEquals(new Person("Иван", "Мельников", 33), actual);
     }
 
     @Test
-    public void factory() {
+    public void factoryAsReferenceToConstructor() {
         PersonFactory factory = Person::new;
-        withFactory(factory);
+
+        Person actual = factory.create("Иван", "Мельников", 33);
+
+        assertEquals(new Person("Иван", "Мельников", 33), actual);
     }
 }
