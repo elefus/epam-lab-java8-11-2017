@@ -32,16 +32,25 @@ public class Exercise4 {
         }
 
         /**
-         * Common code for flatMap() and map()
+         * Flatmaps arbitrary base List
+         */
+        private <FROM, TO> List<TO> applyFlatMapping(final List<FROM> base, final Function<FROM, List<TO>> flatMapping) {
+            final List<TO> result = new ArrayList<>();
+            for (final FROM r : base) {
+                result.addAll(flatMapping.apply(r));
+            }
+            return result;
+        }
+
+        /**
+         * Common code for flatMap() and map(). Constructs new mapping to use as constructor arg
+         * creating new instance of LazyFlatMapHelper.
+         * @param mapping new mapping to be combined tith this.flatMapping
+         * @param <U>
+         * @return combination of this.flatMapping and mapping
          */
         private <U> Function<T, List<U>> getNewMapping(final Function<R, List<U>> mapping) {
-            return (T t) -> {
-                final List<U> result = new ArrayList<>();
-                for (final R r : flatMapping.apply(t)) {
-                    result.addAll(mapping.apply(r));
-                }
-                return result;
-            };
+            return (T t) -> applyFlatMapping(flatMapping.apply(t), mapping);
         }
 
         public <U> LazyFlatMapHelper<T, U> flatMap(final Function<R, List<U>> mapping) {
@@ -55,11 +64,7 @@ public class Exercise4 {
 
         public List<R> force() {
             // TODO реализация
-            final List<R> result = new ArrayList<>();
-            for (final T t : source) {
-                result.addAll(flatMapping.apply(t));
-            }
-            return result;
+            return applyFlatMapping(source, flatMapping);
         }
     }
 
