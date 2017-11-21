@@ -23,7 +23,7 @@ public class Example2 {
     public void operationsOnStreamExample() {
         Example1.getEmployees()
                 .stream()
-                .filter(e -> e.getPerson().getFirstName().equals("John"))
+                .filter(e -> "Иван".equals(e.getPerson().getFirstName()))
                 .map(Employee::getJobHistory)
                 .flatMap(Collection::stream)
                 .peek(System.out::println)
@@ -38,7 +38,7 @@ public class Example2 {
             //  .allMatch(Predicate<T>)
             //  .anyMatch(Predicate<T>)
             //  .noneMatch(Predicate<T>)
-            //  .reduce(BinaryOperator<T>) // коммутативность операции
+            //  .reduce(BinaryOperator<T>)
             //  .collect(Collector<T, A, R>)
             //  .count()
             //  .findAny()
@@ -51,6 +51,16 @@ public class Example2 {
             //  .iterator()
     }
 
+    /**
+     *            filter map flatMap peek distinct unordered sorted skip limit sequential parallel
+     * CONCURRENT       |   |       |    |        |         |      |    |     |    -     |    +
+     * DISTINCT         | - |   -   |    |    +   |         |      |    |     |          |
+     * IMMUTABLE        |   |       |    |        |         |      |    |     |          |
+     * NONNULL          | - |   -   |    |        |         |      |    |     |          |
+     * ORDERED          |   |       |    |        |    -    |  +   |    |     |          |
+     * SORTED           | - |   -   |    |        |    -    |  +   |    |     |          |
+     * SIZED        -   |   |   -   |    |    -   |         |      |    |     |          |
+     */
     @Test
     public void singleUsageStream() {
         Stream<Employee> employeeStream = Example1.getEmployees()
