@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,7 +21,11 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        List<Person> personsEverWorkedInEpam = null;
+        List<Person> personsEverWorkedInEpam = employees.stream()
+                .filter(employee -> employee.getJobHistory().stream()
+                        .anyMatch(entry -> "EPAM".equals(entry.getEmployer())))
+                .map(Employee::getPerson)
+                .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
             employees.get(0).getPerson(),
