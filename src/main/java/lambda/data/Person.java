@@ -31,6 +31,10 @@ public class Person implements Comparable<Person>, Serializable {
         return lastName;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public int getAge(Person this) {
         return age;
     }
