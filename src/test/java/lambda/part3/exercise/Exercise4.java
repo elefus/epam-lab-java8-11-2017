@@ -26,45 +26,42 @@ public class Exercise4 {
             this.flatMapping = mapping;
         }
 
-        public static <T> LazyFlatMapHelper<T, T> from(final List<T> list) {
+        public static <T> LazyFlatMapHelper<T, T> from(final List<T> sourceList) {
             // TODO реализация
-            return new LazyFlatMapHelper<>(list, Collections::singletonList);
+            return new LazyFlatMapHelper<>(sourceList, Collections::singletonList);
         }
 
-        /**
-         * Flatmaps arbitrary base List
-         */
-        private <FROM, TO> List<TO> applyFlatMapping(final List<FROM> base, final Function<FROM, List<TO>> flatMapping) {
-            final List<TO> result = new ArrayList<>();
-            for (final FROM r : base) {
-                result.addAll(flatMapping.apply(r));
-            }
-            return result;
-        }
-
-        /**
-         * Common code for flatMap() and map(). Constructs new mapping to use as constructor arg
-         * creating new instance of LazyFlatMapHelper.
-         * @param mapping new mapping to be combined tith this.flatMapping
-         * @param <U>
-         * @return combination of this.flatMapping and mapping
-         */
-        private <U> Function<T, List<U>> getNewMapping(final Function<R, List<U>> mapping) {
-            return (T t) -> applyFlatMapping(flatMapping.apply(t), mapping);
-        }
-
-        public <U> LazyFlatMapHelper<T, U> flatMap(final Function<R, List<U>> mapping) {
+        public <U> LazyFlatMapHelper<T, U> flatMap(final Function<R, List<U>> flatMapping) {
             // TODO реализация
-            return new LazyFlatMapHelper<>(source, getNewMapping(mapping));
+            return new LazyFlatMapHelper<>(source, andThen(flatMapping));
         }
 
         public <U> LazyFlatMapHelper<T, U> map(final Function<R, U> mapping) {
-            return new LazyFlatMapHelper<>(source, getNewMapping(e -> Collections.singletonList(mapping.apply(e))));
+            return new LazyFlatMapHelper<>(source, andThen(e -> Collections.singletonList(mapping.apply(e))));
         }
 
         public List<R> force() {
             // TODO реализация
             return applyFlatMapping(source, flatMapping);
+        }
+
+        /**
+         * Constructs new flatMapping, combining current and new one.
+         * Created to be used as LazyFlatMapHelper constructor arg.
+         */
+        private <U> Function<T, List<U>> andThen(final Function<R, List<U>> flatMapping) {
+            return (T t) -> applyFlatMapping(this.flatMapping.apply(t), flatMapping);
+        }
+
+        /**
+         * Flatmaps arbitrary base List. Helper method to be used in andThen() and force()
+         */
+        private <FROM, TO> List<TO> applyFlatMapping(final List<FROM> base, final Function<FROM, List<TO>> flatMapping) {
+            final List<TO> result = new ArrayList<>();
+            for (final FROM b : base) {
+                result.addAll(flatMapping.apply(b));
+            }
+            return result;
         }
     }
 
