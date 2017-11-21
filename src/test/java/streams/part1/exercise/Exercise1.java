@@ -1,12 +1,16 @@
 package streams.part1.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +22,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        List<Person> personsEverWorkedInEpam = null;
+        List<Person> personsEverWorkedInEpam = employees.stream()
+                .filter(employee -> employee.getJobHistory().stream()
+                        .map(JobHistoryEntry::getEmployer)
+                        .anyMatch("EPAM"::equals))
+                .map(Employee::getPerson)
+                .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
             employees.get(0).getPerson(),
@@ -33,7 +42,14 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        List<Person> startedFromEpam = null;
+        List<Person> startedFromEpam = employees.stream()
+                .filter(employee -> employee.getJobHistory().stream()
+                        .map(JobHistoryEntry::getEmployer)
+                        .findFirst()
+                        .filter("EPAM"::equals)
+                        .isPresent())
+                .map(Employee::getPerson)
+                .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
                 employees.get(0).getPerson(),
@@ -47,9 +63,18 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        List<String> companies = null;
+        Set<String> companies = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream())
+                .map(JobHistoryEntry::getEmployer)
+                .collect(Collectors.toSet());
 
-        assertEquals(Arrays.asList("EPAM", "google", "yandex", "mail.ru", "T-Systems"), companies);
+        Set<String> expected = new HashSet<>();
+        expected.add("EPAM");
+        expected.add("google");
+        expected.add("yandex");
+        expected.add("mail.ru");
+        expected.add("T-Systems");
+        assertEquals(expected, companies);
     }
 
     @Test
@@ -57,8 +82,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Integer minimalAge = null;
+        int minimalAge = employees.stream()
+                .mapToInt(employee -> employee.getPerson().getAge())
+                .min().getAsInt();
 
-        assertEquals(21, minimalAge.intValue());
+        assertEquals(21, minimalAge);
     }
 }
