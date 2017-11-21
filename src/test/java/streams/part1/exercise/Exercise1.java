@@ -7,8 +7,8 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,8 +20,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
+        Predicate<Employee> everWorkedInEpam = e -> e.getJobHistory().stream()
+                .map(JobHistoryEntry::getEmployer)
+                .anyMatch("EPAM"::equals);
+
         List<Person> personsEverWorkedInEpam = employees.stream()
-                .filter(e -> e.getJobHistory().stream().map(JobHistoryEntry::getEmployer).anyMatch(s -> "EPAM".equals(s)))
+                .filter(everWorkedInEpam)
                 .map(Employee::getPerson)
                 .collect(Collectors.toList());
 
@@ -38,8 +42,16 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
+        Predicate<Employee> hasEpamAsFirstEmployer =
+                e -> e.getJobHistory().stream()
+                        .findFirst()
+                        // Avoid NPE in case of empy job history, predicate returns false
+                        .orElseGet(() -> new JobHistoryEntry(0, "", ""))
+                        .getEmployer()
+                        .equals("EPAM");
+
         List<Person> startedFromEpam = employees.stream()
-                .filter(e -> e.getJobHistory().stream().findFirst().get().getEmployer().equals("EPAM"))
+                .filter(hasEpamAsFirstEmployer)
                 .map(Employee::getPerson)
                 .collect(Collectors.toList());
 
@@ -56,8 +68,10 @@ public class Exercise1 {
 
         // TODO реализация
         Set<String> companies = employees.stream()
-                .map(Employee::getJobHistory).flatMap(List::stream)
-                .map(JobHistoryEntry::getEmployer).distinct().collect(Collectors.toSet());
+                .map(Employee::getJobHistory)
+                .flatMap(List::stream)
+                .map(JobHistoryEntry::getEmployer)
+                .collect(Collectors.toSet());
 
         Set<String> expected = new HashSet<>();
         expected.add("EPAM");
@@ -73,8 +87,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Integer minimalAge = employees.stream().map(Employee::getPerson)
-                .map(Person::getAge).min(Comparator.naturalOrder()).get();
+        Integer minimalAge = employees.stream()
+                .map(Employee::getPerson)
+                .mapToInt(Person::getAge)
+                .min().getAsInt();
 
         assertEquals(21, minimalAge.intValue());
     }
