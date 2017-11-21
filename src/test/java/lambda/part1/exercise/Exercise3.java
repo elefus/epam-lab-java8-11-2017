@@ -1,5 +1,7 @@
 package lambda.part1.exercise;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings({"ConstantConditions", "unused"})
+@SuppressWarnings({"ConstantConditions", "ComparatorCombinators", "Guava", "unused"})
 public class Exercise3 {
 
     @Test
@@ -17,6 +19,7 @@ public class Exercise3 {
         Person[] persons = getPersons();
 
         // TODO использовать Arrays.sort + expression-lambda
+        Arrays.sort(persons, (p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()));
 
         assertArrayEquals(new Person[]{
             new Person("Иван", "Мельников", 20),
@@ -31,6 +34,13 @@ public class Exercise3 {
         Person[] persons = getPersons();
 
         // TODO использовать Arrays.sort + statement-lambda
+        Arrays.sort(persons, (p1, p2) -> {
+            int compareLastName = p1.getLastName().compareTo(p2.getLastName());
+            if (compareLastName == 0)
+                return p1.getFirstName().compareTo(p2.getFirstName());
+            else
+                return compareLastName;
+        });
 
         assertArrayEquals(new Person[]{
             new Person("Алексей", "Доренко", 40),
@@ -45,7 +55,13 @@ public class Exercise3 {
         List<Person> persons = Arrays.asList(getPersons());
 
         // TODO использовать FluentIterable
-        Person person = null;
+        // Using get() without isPresent() check is OK here, because if
+        // there is no required person, we should throw exception any way.
+        Person person = FluentIterable
+                .from(persons)
+                .firstMatch(
+                        p -> p != null && p.getAge() == 30
+                ).get();
 
         assertEquals(new Person("Николай", "Зимов", 30), person);
     }
