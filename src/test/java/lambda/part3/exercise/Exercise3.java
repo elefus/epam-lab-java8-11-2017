@@ -32,7 +32,7 @@ public class Exercise3 {
 
         public List<R> force() {
             // TODO реализация
-            List<R> result = new ArrayList<>();
+            List<R> result = new ArrayList<>(source.size());
             for (T elem : source) {
                 result.add(mapping.apply(elem));
             }
