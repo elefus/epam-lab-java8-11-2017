@@ -84,7 +84,7 @@ public class Exercise2 {
                  .flatMap(Employee::getJobHistory)
                  .map(JobHistoryEntry::getPosition)
                  .flatMap(Lists::charactersOf)
-                 .map(Integer::new)
+                 .map(Integer::valueOf)
                  .getMapped();
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
     }
