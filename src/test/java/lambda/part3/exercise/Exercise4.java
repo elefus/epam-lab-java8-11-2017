@@ -31,27 +31,26 @@ public class Exercise4 {
             return new LazyFlatMapHelper<>(list, Collections::singletonList);
         }
 
-        public <U> LazyFlatMapHelper<T, U> flatMap(final Function<R, List<U>> flatMapping) {
-            // TODO реализация
-            final Function<T, List<U>> newMapping = t -> {
-                List<U> result = new ArrayList<>();
-                for (final R r : this.flatMapping.apply(t)) {
-                    result.addAll(flatMapping.apply(r));
+        /**
+         * Common code for flatMap() and map()
+         */
+        private <U> Function<T, List<U>> getNewMapping(final Function<R, List<U>> mapping) {
+            return (T t) -> {
+                final List<U> result = new ArrayList<>();
+                for (final R r : flatMapping.apply(t)) {
+                    result.addAll(mapping.apply(r));
                 }
                 return result;
             };
-            return new LazyFlatMapHelper<>(source, newMapping);
         }
 
-        public <U2> LazyFlatMapHelper<T, U2> map(final Function<R, U2> mapping) {
-            Function<T, List<U2>> newMapping = t -> {
-                final List<U2> result = new ArrayList<>();
-                for (final R r : flatMapping.apply(t)) {
-                    result.add(mapping.apply(r));
-                }
-                return result;
-            };
-            return new LazyFlatMapHelper<>(source, newMapping);
+        public <U> LazyFlatMapHelper<T, U> flatMap(final Function<R, List<U>> mapping) {
+            // TODO реализация
+            return new LazyFlatMapHelper<>(source, getNewMapping(mapping));
+        }
+
+        public <U> LazyFlatMapHelper<T, U> map(final Function<R, U> mapping) {
+            return new LazyFlatMapHelper<>(source, getNewMapping(e -> Collections.singletonList(mapping.apply(e))));
         }
 
         public List<R> force() {
@@ -72,7 +71,7 @@ public class Exercise4 {
                 .flatMap(Employee::getJobHistory)
                 .map(JobHistoryEntry::getPosition)
                 .flatMap(Lists::charactersOf)
-                .map(Integer::new)
+                .map(Integer::valueOf)
                 .force();
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
     }
