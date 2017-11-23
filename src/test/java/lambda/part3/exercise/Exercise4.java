@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -25,16 +26,14 @@ public class Exercise4 {
         }
 
         public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
-            return new LazyFlatMapHelper<>(list, Arrays::asList);
+            return new LazyFlatMapHelper<>(list, Collections::singletonList);
         }
 
         public <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
             return new LazyFlatMapHelper<>(source, t -> {
                 List<U> result = new ArrayList<>();
                 for (R r : this.flatMapping.apply(t)) {
-                    for (U u : flatMapping.apply(r)) {
-                        result.add(u);
-                    }
+                    result.addAll(flatMapping.apply(r));
                 }
                 return result;
             });
@@ -43,9 +42,7 @@ public class Exercise4 {
         public List<R> force() {
             final List<R> result = new ArrayList<>();
             for (T t : source) {
-                for (R r : flatMapping.apply(t)) {
-                    result.add(r);
-                }
+                result.addAll(flatMapping.apply(t));
             }
             return result;
         }
