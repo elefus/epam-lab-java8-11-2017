@@ -2,7 +2,6 @@ package streams.part2.example;
 
 import lambda.data.Employee;
 import lambda.data.Person;
-import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;

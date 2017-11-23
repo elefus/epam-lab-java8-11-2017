@@ -5,7 +5,7 @@ import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
-import streams.part1.example.data.PersonPositionPair;
+import streams.part2.example.data.PersonPositionPair;
 
 import java.util.*;
 import java.util.function.BiConsumer;
