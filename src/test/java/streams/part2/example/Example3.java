@@ -61,13 +61,7 @@ public class Example3 {
     public void getTheCoolestByPositionUsingToMap() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Person> coolest = new HashMap<>();
-        employees.stream()
-                 .flatMap(employee -> employee.getJobHistory()
-                                              .stream()
-                                              .map(historyEntry -> new PersonPositionDuration(employee.getPerson(), historyEntry.getPosition(), historyEntry.getDuration())))
-                 .collect(toMap(PersonPositionDuration::getPosition, Function.identity(), (p1, p2) -> p1.getDuration() > p2.getDuration() ? p1 : p2))
-                 .forEach((position, entry) -> coolest.put(position, entry.getPerson()));
+        Map<String, Person> coolest = null;
 
         assertEquals(prepareExpected(employees), coolest);
     }
@@ -76,14 +70,7 @@ public class Example3 {
     public void getTheCoolestByPositionUsingGroupingBy() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Person> coolest = employees.stream()
-                                               .flatMap(employee -> employee.getJobHistory()
-                                                                            .stream()
-                                                                            .map(historyEntry -> new PersonPositionDuration(employee.getPerson(), historyEntry.getPosition(), historyEntry.getDuration())))
-                                               .collect(groupingBy(PersonPositionDuration::getPosition,
-                                                                   collectingAndThen(maxBy(comparingInt(PersonPositionDuration::getDuration)), employee -> employee.orElseThrow(IllegalStateException::new).getPerson())));
-
-        assertEquals(prepareExpected(employees), coolest);
+        Map<String, Person> coolest = null;
     }
 
     private static Map<String, Person> prepareExpected(List<Employee> employees) {
