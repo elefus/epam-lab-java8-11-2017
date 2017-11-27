@@ -35,13 +35,14 @@ public class Exercise2 {
 
     @Test
     public void implementsMultiplierUsingStatementLambda() {
-        Multiplier<Integer> multiplier = null;
+        Multiplier<Integer> multiplier = (x, y) -> { return x * y; };
 
-        testIntegerMultiplier(multiplier);    }
+        testIntegerMultiplier(multiplier);
+    }
 
     @Test
     public void implementsIntegerMultiplierUsingExpressionLambda() {
-        Multiplier<Integer> multiplier = null;
+        Multiplier<Integer> multiplier = (x, y) -> x * y;
 
         testIntegerMultiplier(multiplier);
     }
@@ -56,7 +57,7 @@ public class Exercise2 {
 
     @Test
     public void implementsStringMultiplierUsingClassMethodReference() {
-        Multiplier<String> multiplier = null;
+        Multiplier<String> multiplier = Exercise2::multiplyString;
 
         assertEquals("aaa", multiplier.multiply("a", 3));
         assertEquals("", multiplier.multiply("qwerty", 0));
@@ -77,7 +78,7 @@ public class Exercise2 {
 
     @Test
     public void implementsStringMultiplierUsingObjectMethodReference() {
-        Multiplier<String> multiplier = null;
+        Multiplier<String> multiplier = (line, number) -> new Exercise2().stringSumWithDelimiter(line, number);
 
         assertEquals("a-a-a", multiplier.multiply("a", 3));
         assertEquals("", multiplier.multiply("qwerty", 0));
