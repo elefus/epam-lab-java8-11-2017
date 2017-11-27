@@ -4,7 +4,6 @@ import lambda.data.Employee;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +22,6 @@ public class Exercise1 {
         // TODO функция извлечения длины полного имени из сотрудника fullNameLengthExtractor: Employee -> Integer
         // TODO преобразование списка employees в lengths используя fullNameLengthExtractor
 
-        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 }
