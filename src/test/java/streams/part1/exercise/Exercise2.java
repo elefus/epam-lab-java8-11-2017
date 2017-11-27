@@ -6,6 +6,7 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -33,6 +34,8 @@ public class Exercise2 {
 
         // TODO реализация
 
+        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED : Status.DECLINED);
+
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
         assertEquals(Status.DECLINED, candidates.get(alex));
@@ -48,7 +51,12 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
         candidates.put(helen, Status.PENDING);
 
+        BiFunction<Person, Status, Status> greaterThan21 = (person, status) -> person.getAge() > 21 ? Status.ACCEPTED : null;
+
         // TODO реализация
+        candidates.compute(alex, greaterThan21);
+        candidates.compute(ivan, greaterThan21);
+        candidates.compute(helen, greaterThan21);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -65,9 +73,9 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
 
         // TODO реализация
-        Status alexStatus = null;
-        Status ivanStatus = null;
-        Status helenStatus = null;
+        Status alexStatus = candidates.getOrDefault(alex, Status.UNKNOWN);
+        Status ivanStatus = candidates.getOrDefault(ivan, Status.UNKNOWN);
+        Status helenStatus = candidates.getOrDefault(helen, Status.UNKNOWN);
 
         assertEquals(Status.PENDING, alexStatus);
         assertEquals(Status.PENDING, ivanStatus);
