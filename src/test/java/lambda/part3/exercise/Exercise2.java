@@ -1,5 +1,6 @@
 package lambda.part3.exercise;
 
+import com.google.common.collect.Lists;
 import lambda.data.Employee;
 import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
@@ -54,10 +55,7 @@ public class Exercise2 {
         public <R> MapHelper<R> flatMap(Function<T, List<R>> flatMapping) {
             // TODO реализация
             List<R> result = new ArrayList<>();
-            for (T mainElement : source) {
-                for (R subElement : flatMapping.apply(mainElement))
-                    result.add(subElement);
-            }
+            for (T element : source) result.addAll(flatMapping.apply(element));
             return new MapHelper<>(result);
         }
     }
@@ -78,14 +76,12 @@ public class Exercise2 {
     public void mapEmployeesToCodesOfLetterTheirPositionsUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-//        List<Integer> codes = MapHelper.from(employees)
-//                .flatMap(Employee::getJobHistory)
-//                .map(JobHistoryEntry::getPosition)
-////                .map(string -> string.toCharArray())
-////                .map()
-//                .flatMap(string -> Arrays.asList((Character[]) string.toCharArray())
-//                        .map(character -> character. )
-//                        .getMapped();
+        List<Integer> codes = MapHelper.from(employees)
+                .flatMap(Employee::getJobHistory)
+                .map(JobHistoryEntry::getPosition)
+                .flatMap(Lists::charactersOf)
+                .map(letter -> (int) letter)
+                .getMapped();
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
     }
 
