@@ -6,6 +6,7 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -32,6 +33,17 @@ public class Exercise2 {
         candidates.put(helen, Status.PENDING);
 
         // TODO реализация
+/*        BiFunction<Person, Status, Status> getBasicOrRiseSalary = (person, status) -> person.getAge() > 21 ? Status.ACCEPTED
+                : Status.DECLINED;
+
+        candidates.compute(alex, getBasicOrRiseSalary);
+        candidates.compute(ivan, getBasicOrRiseSalary);
+        candidates.compute(helen, getBasicOrRiseSalary);*/
+
+        for (Person person : candidates.keySet()) {
+            candidates.compute(person, (person1, status) ->person.getAge() > 21 ? Status.ACCEPTED
+                    : Status.DECLINED );
+        }
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -49,6 +61,10 @@ public class Exercise2 {
         candidates.put(helen, Status.PENDING);
 
         // TODO реализация
+        for (Person person : candidates.keySet()) {
+            candidates.compute(person, (person1, status) ->person.getAge() > 21 ? Status.ACCEPTED
+                    : null);
+        }
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -65,9 +81,9 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
 
         // TODO реализация
-        Status alexStatus = null;
-        Status ivanStatus = null;
-        Status helenStatus = null;
+        Status alexStatus = candidates.getOrDefault(alex, Status.UNKNOWN);
+        Status ivanStatus = candidates.getOrDefault(ivan, Status.UNKNOWN);
+        Status helenStatus = candidates.getOrDefault(helen, Status.UNKNOWN);
 
         assertEquals(Status.PENDING, alexStatus);
         assertEquals(Status.PENDING, ivanStatus);
@@ -88,6 +104,7 @@ public class Exercise2 {
         newValues.put(helen, Status.PENDING);
 
         // TODO реализация
+        oldValues.forEach((person, status) -> newValues.merge(person, status, (oldValue, newValue) -> oldValue));
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
