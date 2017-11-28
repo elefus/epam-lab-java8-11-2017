@@ -91,7 +91,7 @@ public class Exercise2 {
         )));
         expected.put("yandex", new HashSet<>(Collections.singletonList(employees.get(2).getPerson())));
         expected.put("mail.ru", new HashSet<>(Collections.singletonList(employees.get(2).getPerson())));
-        expected.put("google", new HashSet<>(Arrays.asList(
+        expected.put("T-Systems", new HashSet<>(Arrays.asList(
                 employees.get(3).getPerson(),
                 employees.get(5).getPerson()
         )));
