@@ -1,11 +1,13 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,7 +19,13 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Long hours = null;
+        Long hours = employees.stream()
+                              .flatMap(employee -> employee.getJobHistory()
+                                                           .stream()
+                                                           .filter(jobHistoryEntry -> "EPAM".equals(jobHistoryEntry.getEmployer()))
+                                                           .map(JobHistoryEntry::getDuration))
+                             .mapToLong(Long::valueOf)
+                              .sum();
 
         assertEquals(18, hours.longValue());
     }
@@ -27,7 +35,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Set<Person> workedAsQa = null;
+        Set<Person> workedAsQa = employees.stream().filter(employee -> employee.getJobHistory()
+                                                                               .stream()
+                                                                               .map(JobHistoryEntry::getPosition)
+                                                                               .anyMatch("QA"::equals))
+                .map(Employee::getPerson)
+                .collect(Collectors.toSet());
 
         Set<Person> expected = new HashSet<>(Arrays.asList(
                 employees.get(2).getPerson(),
@@ -42,7 +55,7 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        String result = null;
+        String result = employees.stream().map(Employee::getPerson).map(Person::getFullName).collect(Collectors.joining("\n"));
 
         String expected = "Иван Мельников\n"
                         + "Александр Дементьев\n"
