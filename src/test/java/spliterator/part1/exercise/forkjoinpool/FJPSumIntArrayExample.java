@@ -21,7 +21,7 @@ public class FJPSumIntArrayExample {
     }
 
 
-    private static class ForkJoinQuicksortTask extends RecursiveTask {
+    private static class ForkJoinQuicksortTask extends RecursiveTask<Integer> {
         private static final int SEQUENTIAL_THRESHOLD = 20;
 
         private int[] data;
@@ -35,7 +35,7 @@ public class FJPSumIntArrayExample {
         }
 
         @Override
-        protected Object compute() {
+        protected Integer compute() {
             int sum = 0;
             if (toInclusive - fromInclusive < SEQUENTIAL_THRESHOLD) {
                 for (int i = fromInclusive; i <= toInclusive; i++) {
@@ -47,8 +47,8 @@ public class FJPSumIntArrayExample {
                 left.fork();
 
                 ForkJoinQuicksortTask right = new ForkJoinQuicksortTask(data, pivot + 1, toInclusive);
-                sum += (int) right.compute();
-                sum += (int) left.join();
+                sum += right.compute();
+                sum += left.join();
             }
             return sum;
         }
