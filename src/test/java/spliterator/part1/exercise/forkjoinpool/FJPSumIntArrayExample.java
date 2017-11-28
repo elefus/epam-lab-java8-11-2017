@@ -6,14 +6,18 @@ import spliterator.part1.example.forkjoinpool.FJPQuickSortExample;
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
 public class FJPSumIntArrayExample {
-    private static int threadCount = 0;
+    private static volatile AtomicInteger threadCount;
+    private static final int SEQUENTIAL_THRESHOLD = 10;
+
     @Test
     public void test() {
+        threadCount = new AtomicInteger(1);
         int[] data = IntStream.generate(() -> 1)
                               .limit(100)
                               .toArray();
@@ -25,28 +29,27 @@ public class FJPSumIntArrayExample {
     }
 
     private static class ForkJoinSumArrayTask extends RecursiveTask<Integer> {
-        private static final int SEQUENTIAL_THRESHOLD = 10;
 
         private int[] data;
         private int fromInclusive;
         private int toInclusive;
 
-        public ForkJoinSumArrayTask(int[] data, int fromInclusive, int toInclusive) {
+        ForkJoinSumArrayTask(int[] data, int fromInclusive, int toInclusive) {
             this.data = data;
             this.fromInclusive = fromInclusive;
             this.toInclusive = toInclusive;
-            threadCount++;
-            System.out.println(Thread.currentThread());
         }
 
         @Override
         protected Integer compute() {
             if (toInclusive - fromInclusive < SEQUENTIAL_THRESHOLD) {
+                System.out.println(Thread.currentThread());
                 return Arrays.stream(data).skip(fromInclusive).limit(toInclusive - fromInclusive + 1).sum();
             } else {
                 int pivot = (fromInclusive + toInclusive)/2;
                 FJPSumIntArrayExample.ForkJoinSumArrayTask left = new FJPSumIntArrayExample.ForkJoinSumArrayTask(data, fromInclusive, pivot);
                 left.fork();
+                threadCount.addAndGet(1);
 
                 FJPSumIntArrayExample.ForkJoinSumArrayTask right = new FJPSumIntArrayExample.ForkJoinSumArrayTask(data, pivot + 1, toInclusive);
                 return left.join() + right.compute();
