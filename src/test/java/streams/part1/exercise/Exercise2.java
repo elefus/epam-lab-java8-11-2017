@@ -96,6 +96,9 @@ public class Exercise2 {
         newValues.put(helen, Status.PENDING);
 
         // TODO реализация
+        oldValues.forEach((key, value) ->
+                newValues.merge(key, value, (oldStatus, newStatus) ->
+                        oldStatus == null ? newValues.put(key, newStatus) : oldStatus));
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
