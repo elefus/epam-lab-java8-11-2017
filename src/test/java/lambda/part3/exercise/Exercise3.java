@@ -41,6 +41,6 @@ public class Exercise3 {
         // TODO                              .map(Person -> String(full name))
         // TODO                              .map(String -> Integer(length from string))
         // TODO                              .getMapped();
-        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 }
