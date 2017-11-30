@@ -75,8 +75,7 @@ public class Exercise1 {
         Integer minimalAge = employees.stream()
                 .map(Employee::getPerson)
                 .map(Person::getAge)
-                .sorted()
-                .findFirst().get();
+                .min(Integer::compareTo).get();
 
         assertEquals(21, minimalAge.intValue());
     }
