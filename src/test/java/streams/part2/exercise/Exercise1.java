@@ -7,6 +7,7 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -53,7 +54,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        String result = null;
+        String result = employees.stream()
+                .map(Employee::getPerson)
+                .map(Person::getFullName)
+                .collect(Collectors.joining("\n"));
 
         String expected = "Иван Мельников\n"
                         + "Александр Дементьев\n"
@@ -67,6 +71,8 @@ public class Exercise1 {
     @Test
     public void groupPersonsByFirstPositionUsingToMap() {
         List<Employee> employees = Example1.getEmployees();
+
+        Function<Employee, String> getFirstPosition = employee -> employee.getJobHistory().get(0).getPosition();
 
         // TODO реализация
         Map<String, Set<Person>> result = null;
