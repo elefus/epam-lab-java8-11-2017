@@ -71,11 +71,6 @@ public class Exercise2 {
         List<Employee> employees = Example1.getEmployees();
 
 
-        // TODO                 MapHelper.from(employees)
-        // TODO                          .map(Employee -> Person)
-        // TODO                          .map(Person -> String(full name))
-        // TODO                          .map(String -> Integer(length of string))
-        // TODO                          .getMapped();
         List<Integer> lengths = MapHelper.from(employees)
                 .map(Employee::getPerson)
                 .map(Person::getFullName)
@@ -90,12 +85,6 @@ public class Exercise2 {
         List<Employee> employees = Example1.getEmployees();
 
 
-        // TODO               MapHelper.from(employees)
-        // TODO                        .flatMap(Employee -> JobHistoryEntry)
-        // TODO                        .map(JobHistoryEntry -> String(position))
-        // TODO                        .flatMap(String -> Character(letter))
-        // TODO                        .map(Character -> Integer(code letter)
-        // TODO                        .getMapped();
         List<Integer> codes = MapHelper.from(employees)
                 .flatMap(Employee::getJobHistory)
                 .map(JobHistoryEntry::getPosition)
