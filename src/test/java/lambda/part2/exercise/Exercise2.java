@@ -14,9 +14,10 @@ public class Exercise2 {
     @Test
     public void personHasNotEmptyLastNameAndFirstName() {
         // TODO предикат Person -> boolean, проверяющий что имя и фамилия человека не пусты
+
         Predicate<Person> validate = person -> person.getFirstName().length() != 0
                 && person.getLastName().length() != 0;
-
+      
         assertTrue(validate.test(new Person("Алексей", "Доренко", 40)));
         assertFalse(validate.test(new Person("Николай", "", 30)));
         assertFalse(validate.test(new Person("", "Мельников", 20)));
@@ -38,6 +39,7 @@ public class Exercise2 {
 
     @Test
     public void personHasNotEmptyLastNameAndFirstNameUsingLogicalOperators() {
+
         Predicate<Person> personHasEmptyFirstName = person -> person.getFirstName().length() == 0;
         Predicate<Person> personHasEmptyLastName = person -> person.getLastName().length() == 0;
 
