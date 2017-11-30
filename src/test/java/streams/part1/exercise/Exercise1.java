@@ -70,7 +70,13 @@ public class Exercise1 {
                 .distinct()
                 .collect(Collectors.toSet());
 
-        assertEquals(new HashSet<>(Arrays.asList("EPAM", "google", "yandex", "mail.ru", "T-Systems")), companies);
+        Set<String> expected = new HashSet<>();
+        expected.add("EPAM");
+        expected.add("google");
+        expected.add("yandex");
+        expected.add("mail.ru");
+        expected.add("T-Systems");
+        assertEquals(expected, companies);
     }
 
     @Test
