@@ -41,6 +41,6 @@ public class Exercise3 {
                 .map(Person::getFullName)
                 .map(String::length)
                 .force();
-        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
     }
 }
