@@ -43,11 +43,7 @@ public class Exercise1 {
 
         // TODO реализация
         List<Person> startedFromEpam = employees.stream()
-                .filter(employee -> employee.getJobHistory().stream()
-                        .map(JobHistoryEntry::getEmployer)
-                        .findFirst()
-                        .filter("EPAM"::equals)
-                        .isPresent())
+                .filter(employee -> "EPAM".equals(employee.getJobHistory().get(0).getEmployer()))
                 .map(Employee::getPerson)
                 .collect(Collectors.toList());
 
