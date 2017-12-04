@@ -95,6 +95,7 @@ public class Exercise1 {
                 .firstMatch(isFirstAge30);
 
         person = personOptional.get();
+
         assertEquals(new Person("Николай", "Зимов", 30), person);
     }
 
