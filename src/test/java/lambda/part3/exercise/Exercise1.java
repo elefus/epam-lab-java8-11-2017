@@ -28,6 +28,6 @@ public class Exercise1 {
         // TODO преобразование списка employees в lengths используя fullNameLengthExtractor
         lengths = employees.stream().map(fullNameLengthExtractor).collect(Collectors.toList());
 
-        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 }

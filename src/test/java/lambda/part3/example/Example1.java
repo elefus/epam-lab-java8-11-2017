@@ -38,10 +38,22 @@ public class Example1 {
                             new JobHistoryEntry(1, "dev", "mail.ru")
                     )),
             new Employee(
+                    new Person("Анна", "Светличная", 21),
+                    Collections.singletonList(
+                            new JobHistoryEntry(1, "tester", "T-Systems")
+                    )),
+            new Employee(
                     new Person("Игорь", "Толмачёв", 50),
                     Arrays.asList(
                             new JobHistoryEntry(5, "tester", "EPAM"),
                             new JobHistoryEntry(5, "QA", "EPAM")
+                    )),
+            new Employee(
+                    new Person("Иван", "Александров", 33),
+                    Arrays.asList(
+                            new JobHistoryEntry(2, "QA", "T-Systems"),
+                            new JobHistoryEntry(3, "QA", "EPAM"),
+                            new JobHistoryEntry(1, "dev", "EPAM")
                     ))
         );
     }
@@ -71,6 +83,6 @@ public class Example1 {
             }
         }
 
-        assertEquals(Collections.singletonList(employees.get(0)), result);
+        assertEquals(Arrays.asList(employees.get(0), employees.get(5)), result);
     }
 }
