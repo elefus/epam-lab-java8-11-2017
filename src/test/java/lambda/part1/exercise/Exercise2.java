@@ -1,12 +1,14 @@
 package lambda.part1.exercise;
 
+import lambda.part1.example.Example2;
+import lambda.part1.example.interfaces.Summator;
 import org.junit.Test;
 
 import java.util.StringJoiner;
 
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings({"FieldCanBeLocal", "ConstantConditions", "unused"})
+@SuppressWarnings({"FieldCanBeLocal", "ConstantConditions", "unused", "CodeBlock2Expr", "Convert2Lambda"})
 public class Exercise2 {
 
     @FunctionalInterface
@@ -28,20 +30,29 @@ public class Exercise2 {
 
     @Test
     public void implementsIntegerMultiplierUsingAnonymousClass() {
-        Multiplier<Integer> multiplier = null;
+        Multiplier<Integer> multiplier = new Multiplier<Integer>() {
+            @Override
+            public Integer multiply(Integer value, int multiplier) {
+                return value * multiplier;
+            }
+        };
 
         testIntegerMultiplier(multiplier);
     }
 
     @Test
     public void implementsMultiplierUsingStatementLambda() {
-        Multiplier<Integer> multiplier = null;
+        Multiplier<Integer> multiplier = (value, mul) -> {
+            return value * mul;
+        };
 
-        testIntegerMultiplier(multiplier);    }
+        testIntegerMultiplier(multiplier);
+    }
 
     @Test
     public void implementsIntegerMultiplierUsingExpressionLambda() {
-        Multiplier<Integer> multiplier = null;
+        Multiplier<Integer> multiplier = (value, multiplier1) -> value * multiplier1;
+
 
         testIntegerMultiplier(multiplier);
     }
@@ -56,7 +67,7 @@ public class Exercise2 {
 
     @Test
     public void implementsStringMultiplierUsingClassMethodReference() {
-        Multiplier<String> multiplier = null;
+        Multiplier<String> multiplier = Exercise2::multiplyString;
 
         assertEquals("aaa", multiplier.multiply("a", 3));
         assertEquals("", multiplier.multiply("qwerty", 0));
@@ -77,7 +88,7 @@ public class Exercise2 {
 
     @Test
     public void implementsStringMultiplierUsingObjectMethodReference() {
-        Multiplier<String> multiplier = null;
+        Multiplier<String> multiplier = this::stringSumWithDelimiter;
 
         assertEquals("a-a-a", multiplier.multiply("a", 3));
         assertEquals("", multiplier.multiply("qwerty", 0));
