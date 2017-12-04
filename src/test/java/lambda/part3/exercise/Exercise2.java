@@ -79,7 +79,6 @@ public class Exercise2 {
     public void mapEmployeesToCodesOfLetterTheirPositionsUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-
         List<Integer> codes = MapHelper.from(employees)
                                 .flatMap(Employee::getJobHistory)
                                 .map(JobHistoryEntry::getPosition)
@@ -93,7 +92,6 @@ public class Exercise2 {
                                 .getMapped();
 
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
-
     }
 
     private static List<Integer> calcCodes(String...strings) {
