@@ -42,7 +42,7 @@ public class Exercise4 {
         // TODO                                  .flatMap(String -> Character(letter))
         // TODO                                  .map(Character -> Integer(code letter)
         // TODO                                  .getMapped();
-        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
+        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "tester", "QA", "QA", "QA", "dev"), codes);
     }
 
     private static List<Integer> calcCodes(String...strings) {
