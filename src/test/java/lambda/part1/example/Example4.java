@@ -84,8 +84,7 @@ public class Example4 {
     public void closureThisReferenceByExpressionLambda() throws Exception {
         person = new Person("Иван", "Мельников", 33);
 
-        // FIXME проблемы с GC
-        String firstName = performInCurrentThread(() -> this.person.getFirstName());
+        String firstName = performInCurrentThread(() -> person.getFirstName());
         assertEquals("Иван", firstName);
 
         // FIXME код в старом стиле (на анонимном классе)
