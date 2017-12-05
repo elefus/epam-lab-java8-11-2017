@@ -4,8 +4,10 @@ import lambda.data.Employee;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,7 +17,13 @@ public class Exercise1 {
     @Test
     public void mapEmployeesToLengthOfTheirFullNames() {
         List<Employee> employees = Example1.getEmployees();
-        List<Integer> lengths = null;
+        List<Integer> lengths = new ArrayList<>();
+
+        Function<Employee, String> fullNameExtractor = employee -> employee.getPerson().getFullName();
+        Function<String, Integer> stringLengthExtractor = String::length;
+        Function<Employee, Integer> fullNameLengthExtractor = employee ->
+                stringLengthExtractor.apply(fullNameExtractor.apply(employee));
+        employees.forEach(employee -> lengths.add(fullNameLengthExtractor.apply(employee)));
 
         // TODO функция извлечения полного имени из сотрудника fullNameExtractor: Employee -> String
         // TODO функция извлечения длины из строки stringLengthExtractor: String -> Integer
