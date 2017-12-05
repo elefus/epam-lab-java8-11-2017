@@ -1,293 +1,336 @@
 package streams.part1.example;
 
-import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
-import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
+@SuppressWarnings("Java8CollectionRemoveIf")
 public class Example4 {
 
     @Test
-    public void toListCollector() {
-        Integer[] source = {1, 2, 3, 4, 5};
+    public void putValueIfAbsentOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
 
-        List<Integer> result = Arrays.stream(source)
-                                     .limit(2)
-                                     .collect(Collectors.toList());
+        if (!personSalaries.containsKey(alex)) {
+            personSalaries.put(alex, 65_000);
+        }
 
-        assertEquals(Arrays.asList(1, 2), result);
+        assertEquals(65_000, personSalaries.get(alex).intValue());
     }
 
     @Test
-    public void toSetCollector() {
-        Set<Integer> result = Stream.of(1, 1, 1, 1)
-                                    .collect(Collectors.toSet());
+    public void putValueIfAbsentUsingPutIfAbsent() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
 
-        assertEquals(Collections.singleton(1), result);
+        personSalaries.putIfAbsent(alex, 65_000);
+
+        assertEquals(65_000, personSalaries.get(alex).intValue());
+    }
+
+    private Integer hugeOperation() {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+            return 65_000;
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Test
-    public void toHashMapKeyValueCollector() {
-        Map<Integer, String> result = Stream.of(1, 2, 3)
-                                            .collect(Collectors.toMap(key -> key, Object::toString));
+    public void putHugeValueOnlyIfAbsentOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
 
-        Map<Integer, String> expected = new HashMap<>();
-        expected.put(1, "1");
-        expected.put(2, "2");
-        expected.put(3, "3");
-        assertEquals(expected, result);
-    }
+        if (!personSalaries.containsKey(alex)) {
+            personSalaries.put(alex, hugeOperation());
+        }
 
-    @Test(expected = IllegalStateException.class)
-    public void toHashMapKeyValueCollectorFailsWhenExistsSameKeys() {
-        Stream.of(1, 1, 2, 3).collect(Collectors.toMap(key -> key, Object::toString));
+        assertEquals(65_000, personSalaries.get(alex).intValue());
     }
 
     @Test
-    public void toHashMapKeyValueMergeCollector() {
-        Map<Integer, String> result = Stream.of(1, 1, 2, 3, 4)
-                                            .collect(Collectors.toMap(key -> key,
-                                                                      Object::toString,
-                                                                      (oldValue, newValue) -> oldValue + newValue));
+    public void putHugeValueOnlyIfAbsentUsingComputeIfAbsent() throws InterruptedException {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
 
-        Map<Integer, String> expected = new HashMap<>();
-        expected.put(1, "11");
-        expected.put(2, "2");
-        expected.put(3, "3");
-        expected.put(4, "4");
-        assertEquals(expected, result);
+        personSalaries.computeIfAbsent(alex, person -> hugeOperation());
+
+        assertEquals(65_000, personSalaries.get(alex).intValue());
+    }
+
+    private static int raiseSalary(Person person, int salary) {
+        return salary + 10_000 + person.getAge() * 100;
     }
 
     @Test
-    public void toTreeMapKeyValueMergeCollector() {
-        TreeMap<Integer, String> result = Stream.of(1, 1, 2, 3, 4)
-                                                .collect(Collectors.toMap(key -> key,
-                                                         Object::toString,
-                                                         (oldValue, newValue) -> oldValue + newValue,
-                                                         TreeMap::new));
+    public void reassignIfExistingKeyInMapUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        Map<Integer, String> expected = new HashMap<>();
-        expected.put(1, "11");
-        expected.put(2, "2");
-        expected.put(3, "3");
-        expected.put(4, "4");
-        assertEquals(expected, result);
+        if (personSalaries.containsKey(alex)) {
+            personSalaries.put(alex, raiseSalary(alex, personSalaries.get(alex)));
+        }
+
+        Integer ivanSalary = personSalaries.get(ivan);
+        if (ivanSalary != null) {
+            personSalaries.put(ivan, raiseSalary(alex, ivanSalary));
+        }
+
+        assertEquals(77_000, personSalaries.get(alex).intValue());
+        assertNull(personSalaries.get(ivan));
     }
 
     @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    public void countingCollector() {
-        long countUsingCollector = Stream.of(1, 1, 2, 3, 4).collect(Collectors.counting());
-        long countUsingMethod = Stream.of(1, 1, 2, 3, 4).count();
+    public void reassignOrDeleteSpecificKeyInMapUsingReplace() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        assertEquals(5, countUsingCollector);
-        assertEquals(countUsingCollector, countUsingMethod);
+        personSalaries.replace(alex, 65_000, raiseSalary(alex, 65_000));
+
+        assertEquals(77_000, personSalaries.get(alex).intValue());
     }
 
     @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    // TODO summingDoubleCollector
-    // TODO summingLongCollector
-    public void summingIntCollector() {
-        Integer sumUsingCollector = Example1.getEmployees()
-                                            .stream()
-                                            .map(Employee::getPerson)
-                                            .collect(Collectors.summingInt(Person::getAge));
+    public void reassignOrDeleteIfExistingKeyInMapUsingComputeIfPresent() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        int sumUsingIntStream = Example1.getEmployees()
-                                        .stream()
-                                        .map(Employee::getPerson)
-                                        .mapToInt(Person::getAge)
-                                        .sum();
-        assertEquals(202, sumUsingIntStream);
-        assertEquals(sumUsingIntStream, sumUsingCollector.intValue());
+        personSalaries.computeIfPresent(alex, Example4::raiseSalary);
+        personSalaries.computeIfPresent(ivan, Example4::raiseSalary);
+
+        assertEquals(77_000, personSalaries.get(alex).intValue());
+        assertNull(personSalaries.get(ivan));
     }
 
     @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    // TODO averagingDoubleCollector
-    // TODO averagingLongCollector
-    public void averagingIntCollector() {
-        Double averageUsingCollector = Example1.getEmployees()
-                                               .stream()
-                                               .map(Employee::getPerson)
-                                               .collect(Collectors.averagingInt(Person::getAge));
+    public void reassignExistingKeyInMapUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        OptionalDouble averageUsingIntStream = Example1.getEmployees()
-                                                       .stream()
-                                                       .map(Employee::getPerson)
-                                                       .mapToInt(Person::getAge)
-                                                       .average();
-        assertEquals(33.6666, averageUsingCollector, 0.0001);
-        assertEquals(averageUsingCollector, averageUsingIntStream.orElseThrow(IllegalStateException::new), 0.001);
+        personSalaries.put(alex, raiseSalary(alex, personSalaries.get(alex)));
+
+        assertEquals(77_000, personSalaries.get(alex).intValue());
     }
 
     @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    public void maxByCollector() {
-        Optional<Integer> maxUsingCollector = Example1.getEmployees()
-                                                      .stream()
-                                                      .map(Employee::getPerson)
-                                                      .map(Person::getAge)
-                                                      .collect(Collectors.maxBy(Integer::compare));
+    public void reassignExistingKeyInMapUsingReplace() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        OptionalInt maxUsingIntStream = Example1.getEmployees()
-                                                .stream()
-                                                .map(Employee::getPerson)
-                                                .mapToInt(Person::getAge)
-                                                .max();
+        personSalaries.replace(alex, raiseSalary(alex, personSalaries.get(alex)));
 
-        assertEquals(50, maxUsingCollector.orElseThrow(IllegalStateException::new).intValue());
-        assertEquals(maxUsingCollector.get().intValue(), maxUsingIntStream.orElseThrow(IllegalStateException::new));
+        assertEquals(77_000, personSalaries.get(alex).intValue());
     }
 
     @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    public void minByCollector() {
-        Optional<Integer> maxUsingCollector = Example1.getEmployees()
-                                                      .stream()
-                                                      .map(Employee::getPerson)
-                                                      .map(Person::getAge)
-                                                      .collect(Collectors.minBy(Integer::compare));
+    public void reassignOrDeleteValuesInMapUsingCompute() {
+        int baseSalary = 65_000;
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Person nick = new Person("Николай", "Очагов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, baseSalary);
 
-        OptionalInt maxUsingIntStream = Example1.getEmployees()
-                                                .stream()
-                                                .map(Employee::getPerson)
-                                                .mapToInt(Person::getAge)
-                                                .min();
+        BiFunction<Person, Integer, Integer> getBasicOrRiseSalary = (person, salary) -> salary == null ? baseSalary
+                                                                                                       : raiseSalary(person, salary);
+        personSalaries.compute(alex, getBasicOrRiseSalary);
+        personSalaries.compute(ivan, getBasicOrRiseSalary);
+        personSalaries.compute(nick, getBasicOrRiseSalary);
+        assertEquals(77_000, personSalaries.get(alex).intValue());
+        assertEquals(65_000, personSalaries.get(ivan).intValue());
+        assertEquals(65_000, personSalaries.get(nick).intValue());
 
-        assertEquals(21, maxUsingCollector.orElseThrow(IllegalStateException::new).intValue());
-        assertEquals(maxUsingCollector.get().intValue(), maxUsingIntStream.orElseThrow(IllegalStateException::new));
+        personSalaries.compute(nick, (person, salary) -> null);
+        assertNull(personSalaries.get(nick));
     }
 
     @Test
-    // TODO summarizingDoubleCollector
-    // TODO summarizingLongCollector
-    public void summarizingIntCollector() {
-        IntSummaryStatistics ageStatisticsUsingCollector = Example1.getEmployees()
-                                                                   .stream()
-                                                                   .map(Employee::getPerson)
-                                                                   .collect(Collectors.summarizingInt(Person::getAge));
+    public void mergeValuesUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, List<JobHistoryEntry>> personsExperience = new HashMap<>();
+        personsExperience.put(alex, new ArrayList<>(Collections.singleton(new JobHistoryEntry(1, "tester", "EPAM"))));
 
-        IntSummaryStatistics ageStatisticsUsingIntStream = Example1.getEmployees()
-                                                                   .stream()
-                                                                   .map(Employee::getPerson)
-                                                                   .mapToInt(Person::getAge)
-                                                                   .summaryStatistics();
+        List<JobHistoryEntry> newEpamExperience = new ArrayList<>(Arrays.asList(
+                new JobHistoryEntry(1, "QA", "EPAM"),
+                new JobHistoryEntry(1, "dev", "EPAM")
+        ));
+        if (personsExperience.containsKey(alex)) {
+            personsExperience.get(alex).addAll(newEpamExperience);
+        } else {
+            personsExperience.put(alex, newEpamExperience);
+        }
+        assertEquals(3, personsExperience.get(alex).size());
 
-        assertEquals(6, ageStatisticsUsingCollector.getCount());
-        assertEquals(50, ageStatisticsUsingCollector.getMax());
-        assertEquals(21, ageStatisticsUsingCollector.getMin());
-        assertEquals(202, ageStatisticsUsingCollector.getSum());
-        assertEquals(33.66666, ageStatisticsUsingCollector.getAverage(), 0.0001);
-        assertEquals(ageStatisticsUsingCollector.getCount(), ageStatisticsUsingIntStream.getCount());
+        List<JobHistoryEntry> newGoogleExperience = new ArrayList<>(Arrays.asList(
+                new JobHistoryEntry(1, "QA", "google"),
+                new JobHistoryEntry(1, "dev", "google")
+        ));
+        List<JobHistoryEntry> alexExperience;
+        if ((alexExperience = personsExperience.get(alex)) != null) {
+            alexExperience.addAll(newGoogleExperience);
+        } else {
+            personsExperience.put(alex, newGoogleExperience);
+        }
+        assertEquals(5, personsExperience.get(alex).size());
     }
 
     @Test
-    public void joiningCollector() {
-        String result = Stream.of("a", "b", "c", "d")
-                              .collect(Collectors.joining());
+    public void mergeValuesUsingMerge() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, List<JobHistoryEntry>> personsExperience = new HashMap<>();
+        personsExperience.put(alex, new ArrayList<>(Collections.singleton(new JobHistoryEntry(1, "tester", "EPAM"))));
 
-        assertEquals("abcd", result);
+        List<JobHistoryEntry> newEpamExperience = new ArrayList<>(Arrays.asList(
+                new JobHistoryEntry(1, "QA", "EPAM"),
+                new JobHistoryEntry(1, "dev", "EPAM")
+        ));
+        personsExperience.merge(alex, newEpamExperience, Example4::mergeListsUsingStreams);
+        assertEquals(3, personsExperience.get(alex).size());
+
+        List<JobHistoryEntry> newGoogleExperience = new ArrayList<>(Arrays.asList(
+                new JobHistoryEntry(1, "QA", "google"),
+                new JobHistoryEntry(1, "dev", "google")
+        ));
+        personsExperience.merge(alex, newGoogleExperience, Example4::mergeListsUsingAddAll);
+        assertEquals(5, personsExperience.get(alex).size());
+    }
+
+    private static <T> List<T> mergeListsUsingStreams(List<T> left, List<T> right) {
+        return Stream.concat(left.stream(), right.stream()).collect(Collectors.toList());
+    }
+
+    private static <T> List<T> mergeListsUsingAddAll(List<T> left, List<T> right) {
+        left.addAll(right);
+        return left;
     }
 
     @Test
-    public void joiningWithDelimiterCollector() {
-        String result = Stream.of("a", "b", "c", "d")
-                              .collect(Collectors.joining("~"));
+    public void updateAllValuesUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
+        personSalaries.put(ivan, 65_000);
 
-        assertEquals("a~b~c~d", result);
+        for (Person person : personSalaries.keySet()) {
+            personSalaries.put(person, raiseSalary(person, personSalaries.get(person)));
+        }
+
+        Map<Person, Integer> expected = new HashMap<>();
+        expected.put(alex, 77_000);
+        expected.put(ivan, 77_400);
+        assertEquals(expected, personSalaries);
     }
 
     @Test
-    public void joiningWithDelimiterAndBordersCollector() {
-        String result = Stream.of("a", "b", "c", "d")
-                              .collect(Collectors.joining("~", "[", "]"));
+    public void updateAllValuesUsingReplaceAll() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
+        personSalaries.put(ivan, 65_000);
 
-        assertEquals("[a~b~c~d]", result);
+        personSalaries.replaceAll(Example4::raiseSalary);
+
+        Map<Person, Integer> expected = new HashMap<>();
+        expected.put(alex, 77_000);
+        expected.put(ivan, 77_400);
+        assertEquals(expected, personSalaries);
     }
 
     @Test
-    public void groupingByCollector() {
-        Map<String, List<Person>> nameToPersons = Example1.getEmployees()
-                                                          .stream()
-                                                          .map(Employee::getPerson)
-                                                          .collect(Collectors.groupingBy(Person::getFirstName));
+    public void forEachEntryUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Person ivan = new Person("Иван", "Стрельцов", 24);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
+        personSalaries.put(ivan, 65_000);
 
-        assertEquals(2, nameToPersons.get("Иван").size());
-        assertFalse(nameToPersons.containsKey("Алексей"));
+        AtomicInteger sum = new AtomicInteger();
+        personSalaries.forEach((person, salary) -> sum.addAndGet(raiseSalary(person, salary)));
 
-        Map<Boolean, List<Person>> moreThan40Years = Example1.getEmployees()
-                                                             .stream()
-                                                             .map(Employee::getPerson)
-                                                             .collect(Collectors.groupingBy(person -> person.getAge() > 40));
-
-        assertEquals(1, moreThan40Years.get(true).size());
-        assertEquals(5, moreThan40Years.get(false).size());
+        assertEquals(154_400, sum.get());
     }
 
     @Test
-    public void partitionByCollector() {
-        Map<Boolean, List<Person>> moreThan40Years = Example1.getEmployees()
-                                                             .stream()
-                                                             .map(Employee::getPerson)
-                                                             .collect(Collectors.partitioningBy(person -> person.getAge() > 40));
+    public void removeIfUsingOldStyle() {
+        Set<Person> peoples = new HashSet<>(Arrays.asList(
+                new Person("Алексей", "Мельников", 20),
+                new Person("Елена", "Рощина", 22),
+                new Person("Иван", "Стрельцов", 24)
+        ));
 
-        assertEquals(1, moreThan40Years.get(true).size());
-        assertEquals(5, moreThan40Years.get(false).size());
+        for (Iterator<Person> iterator = peoples.iterator(); iterator.hasNext(); ) {
+            Person people = iterator.next();
+            if (people.getAge() > 23) {
+                iterator.remove();
+            }
+        }
+
+        assertEquals(2, peoples.size());
     }
 
     @Test
-    public void groupingByWithDownstreamCollector() {
-        Map<String, Set<Person>> nameToPersons = Example1.getEmployees()
-                                                         .stream()
-                                                         .map(Employee::getPerson)
-                                                         .collect(Collectors.groupingBy(Person::getFirstName, Collectors.toSet()));
+    public void removeIfUsingMethodFromJava8() {
+        Set<Person> peoples = new HashSet<>(Arrays.asList(
+                new Person("Алексей", "Мельников", 20),
+                new Person("Елена", "Рощина", 22),
+                new Person("Иван", "Стрельцов", 24)
+        ));
 
-        assertEquals(2, nameToPersons.get("Иван").size());
-        assertFalse(nameToPersons.containsKey("Алексей"));
+        peoples.removeIf(person -> person.getAge() > 23);
+
+        assertEquals(2, peoples.size());
     }
 
     @Test
-    public void groupingByWithMapFactoryAndDownstreamCollector() {
-        TreeMap<String, Set<Person>> nameToPersons = Example1.getEmployees()
-                                                             .stream()
-                                                             .map(Employee::getPerson)
-                                                             .collect(Collectors.groupingBy(Person::getFirstName,
-                                                                                            TreeMap::new,
-                                                                                            Collectors.toSet()));
+    public void getOrDefaultUsingOldStyle() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        assertEquals(2, nameToPersons.get("Иван").size());
-        assertFalse(nameToPersons.containsKey("Алексей"));
+        Integer salaryAlex = personSalaries.get(alex);
+        if (salaryAlex == null) {
+            salaryAlex = 30_000;
+        }
+
+        Integer salaryIvan = personSalaries.get(new Person("Иван", "Стрельцов", 24));
+        if (salaryIvan == null) {
+            salaryIvan = 30_000;
+        }
+
+        assertEquals(65_000, salaryAlex.intValue());
+        assertEquals(30_000, salaryIvan.intValue());
     }
 
     @Test
-    public void collectingAndThenCollector() {
-        Long negatedSize = Example1.getEmployees()
-                                   .stream()
-                                   .map(Employee::getPerson)
-                                   .collect(Collectors.collectingAndThen(Collectors.counting(), size -> -size));
+    public void getOrDefaultUsingJava8() {
+        Person alex = new Person("Алексей", "Мельников", 20);
+        Map<Person, Integer> personSalaries = new HashMap<>();
+        personSalaries.put(alex, 65_000);
 
-        assertEquals(-6, negatedSize.longValue());
-    }
+        Person ivan = new Person("Иван", "Стрельцов", 24);
 
-    @Test
-    @SuppressWarnings("SimplifyStreamApiCallChains")
-    public void mappingCollector() {
-        Set<String> names = Example1.getEmployees()
-                                        .stream()
-                                        .map(Employee::getPerson)
-                                        .collect(Collectors.mapping(Person::getFirstName, Collectors.toSet()));
-
-        assertEquals(5, names.size());
+        assertEquals(65_000, personSalaries.getOrDefault(alex, 30_000).intValue());
+        assertEquals(30_000, personSalaries.getOrDefault(ivan, 30_000).intValue());
     }
 }
