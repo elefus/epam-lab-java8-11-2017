@@ -82,7 +82,7 @@ public class Exercise2 {
                 .map(String::toCharArray)
                 .flatMap(Chars::asList)
                 .map(Integer::valueOf)
-                        .getMapped();
+                .getMapped();
         assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "tester", "QA", "QA", "QA", "dev"), codes);
     }
 
