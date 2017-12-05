@@ -1,25 +1,16 @@
 package streams.part1.exercise;
 
-import lambda.data.Employee;
 import lambda.data.Person;
-import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 @SuppressWarnings({"ConstantConditions", "unused", "MismatchedQueryAndUpdateOfCollection"})
 public class Exercise2 {
-
-    enum Status {
-        PENDING,
-        COMMENTED,
-        ACCEPTED,
-        DECLINED,
-        UNKNOWN
-    }
 
     @Test
     public void acceptGreaterThan21OthersDecline() {
@@ -31,7 +22,7 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
         candidates.put(helen, Status.PENDING);
 
-        // TODO реализация
+        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED : Status.DECLINED);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -48,7 +39,7 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
         candidates.put(helen, Status.PENDING);
 
-        // TODO реализация
+        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED : null);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -64,10 +55,9 @@ public class Exercise2 {
         candidates.put(alex, Status.PENDING);
         candidates.put(ivan, Status.PENDING);
 
-        // TODO реализация
-        Status alexStatus = null;
-        Status ivanStatus = null;
-        Status helenStatus = null;
+        Status alexStatus = candidates.getOrDefault(alex, Status.UNKNOWN);
+        Status ivanStatus = candidates.getOrDefault(ivan, Status.UNKNOWN);
+        Status helenStatus = candidates.getOrDefault(helen, Status.UNKNOWN);
 
         assertEquals(Status.PENDING, alexStatus);
         assertEquals(Status.PENDING, ivanStatus);
@@ -87,10 +77,18 @@ public class Exercise2 {
         newValues.put(alex, Status.DECLINED);
         newValues.put(helen, Status.PENDING);
 
-        // TODO реализация
+        oldValues.forEach((key, value) -> newValues.putIfAbsent(key, value));
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
         assertEquals(Status.PENDING, newValues.get(helen));
+    }
+
+    enum Status {
+        PENDING,
+        COMMENTED,
+        ACCEPTED,
+        DECLINED,
+        UNKNOWN
     }
 }
