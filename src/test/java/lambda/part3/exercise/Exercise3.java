@@ -5,6 +5,7 @@ import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -15,20 +16,28 @@ import static org.junit.Assert.assertEquals;
 public class Exercise3 {
 
     private static class LazyMapHelper<T, R> {
+        private final List<T> source;
+        private final Function<T, R> mapping;
+
+        private LazyMapHelper(List<T> source, Function<T, R> mapping) {
+            this.source = source;
+            this.mapping = mapping;
+        }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
-            // TODO реализация
-            throw new UnsupportedOperationException();
+            return new LazyMapHelper<>(list, t -> t);
         }
 
         public List<R> force() {
-            // TODO реализация
-            throw new UnsupportedOperationException();
+            List<R> result = new ArrayList<>();
+            for (T value : source) {
+                result.add(mapping.apply(value));
+            }
+            return result;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> mapping) {
-            // TODO реализация
-            throw new UnsupportedOperationException();
+            return new LazyMapHelper<>(source, this.mapping.andThen(mapping));
         }
     }
 
