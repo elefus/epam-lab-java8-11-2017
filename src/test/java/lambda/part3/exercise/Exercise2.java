@@ -1,6 +1,8 @@
 package lambda.part3.exercise;
 
+import com.google.common.primitives.Chars;
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
@@ -39,7 +41,11 @@ public class Exercise2 {
          */
         public <R> MapHelper<R> map(Function<T, R> mapping) {
             // TODO реализация
-            throw new UnsupportedOperationException();
+            List<R> toMapped = new ArrayList<>();
+            for (T t : source)
+                toMapped.add(mapping.apply(t));
+
+            return new MapHelper<>(toMapped);
         }
 
         /**
@@ -50,7 +56,11 @@ public class Exercise2 {
          */
         public <R> MapHelper<R> flatMap(Function<T, List<R>> flatMapping) {
             // TODO реализация
-            throw new UnsupportedOperationException();
+            List<R> toFlatMapped = new ArrayList<>();
+            for (T t : source)
+                toFlatMapped.addAll(flatMapping.apply(t));
+
+            return new MapHelper<>(toFlatMapped);
         }
     }
 
@@ -58,7 +68,11 @@ public class Exercise2 {
     public void mapEmployeesToLengthOfTheirFullNamesUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-        List<Integer> lengths = null;
+        List<Integer> lengths = MapHelper.from(employees)
+                .map(Employee::getPerson)
+                .map(Person::getFullName)
+                .map(String::length)
+                .getMapped();
         // TODO                 MapHelper.from(employees)
         // TODO                          .map(Employee -> Person)
         // TODO                          .map(Person -> String(full name))
@@ -71,7 +85,12 @@ public class Exercise2 {
     public void mapEmployeesToCodesOfLetterTheirPositionsUsingMapHelper() {
         List<Employee> employees = Example1.getEmployees();
 
-        List<Integer> codes = null;
+        List<Integer> codes = MapHelper.from(employees)
+                .flatMap(Employee::getJobHistory)
+                .map(JobHistoryEntry::getPosition)
+                .flatMap(pos -> Chars.asList(pos.toCharArray()))
+                .map(Integer::valueOf)
+                .getMapped();
         // TODO               MapHelper.from(employees)
         // TODO                        .flatMap(Employee -> JobHistoryEntry)
         // TODO                        .map(JobHistoryEntry -> String(position))
