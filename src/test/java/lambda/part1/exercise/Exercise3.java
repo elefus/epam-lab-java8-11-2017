@@ -11,6 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class Exercise3 {
 
     @Test
