@@ -44,16 +44,10 @@ public class Exercise1 {
 
         // TODO реализация
         List<Person> startedFromEpam = employees
-                .stream()
-                .filter(employee -> employee
-                        .getJobHistory()
                         .stream()
-                        .findFirst()
-                        .get()
-                        .getEmployer()
-                        .equals("EPAM"))
-                .map(Employee::getPerson)
-                .collect(Collectors.toList());
+                        .filter(employee -> employee.getJobHistory().get(0).getEmployer().equals("EPAM"))
+                        .map(Employee::getPerson)
+                        .collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
                 employees.get(0).getPerson(),
@@ -86,8 +80,9 @@ public class Exercise1 {
         Integer minimalAge = employees
                 .stream()
                 .map(Employee::getPerson)
-                .map(Person::getAge)
-                .min(Comparator.naturalOrder()).get();
+                .mapToInt(Person::getAge)
+                .min()
+                .getAsInt();
 
         assertEquals(21, minimalAge.intValue());
     }
