@@ -36,30 +36,29 @@ public class Exercise4 {
             return new LazyFlatMapHelper<>(source, t->{
 
                 List<U> list = new ArrayList<>();
-                for(R r: flatMapper.apply(t)){
-                    list.addAll(flatMapping.apply(r));
-                }
+
+                flatMapper.apply(t).forEach(element -> list.addAll(flatMapping.apply(element)));
 
                 return list;
-
             });
         }
 
         public List<R> force() {
             // TODO реализация
             List<R> list = new ArrayList<>();
-            for (T t: source){
-                list.addAll(flatMapper.apply(t));
-            }
+
+            source.forEach(t -> list.addAll(flatMapper.apply(t)));
+
             return list;
         }
 
         public <U> LazyFlatMapHelper<T, U> map(Function<R, U> mapping) {
                         return new LazyFlatMapHelper<>(source, t -> {
+
                                 List<U> result = new ArrayList<>();
-                                for (R r : flatMapper.apply(t)) {
-                                        result.add(mapping.apply(r));
-                                    }
+
+                                this.flatMapper.apply(t).forEach(elem -> result.add(mapping.apply(elem)));
+
                                 return result;
                            });
         }
