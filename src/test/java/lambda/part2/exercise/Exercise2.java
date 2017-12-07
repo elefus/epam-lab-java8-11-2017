@@ -33,10 +33,10 @@ public class Exercise2 {
         Predicate<Person> personHasEmptyFirstName = person -> person.getFirstName().isEmpty();
         Predicate<Person> personHasEmptyLastName = person -> person.getLastName().isEmpty();
 
-        Predicate<Person> personHasNotEmptyFirstName = personHasEmptyFirstName.negate();
-        Predicate<Person> personHasNotEmptyLastName = personHasEmptyLastName.negate();
+        Predicate<Person> personHasNotEmptyFirstName = negateUsingLogicalOperator(personHasEmptyFirstName);
+        Predicate<Person> personHasNotEmptyLastName = negateUsingLogicalOperator(personHasEmptyLastName);
 
-        Predicate<Person> personHasNotEmptyLastNameAndFirstName = personHasNotEmptyFirstName.and(personHasNotEmptyLastName);
+        Predicate<Person> personHasNotEmptyLastNameAndFirstName = andUsingLogicalOperator(personHasNotEmptyFirstName, personHasNotEmptyLastName);
 
         assertTrue(personHasNotEmptyLastNameAndFirstName.test(new Person("Алексей", "Доренко", 40)));
         assertFalse(personHasNotEmptyLastNameAndFirstName.test(new Person("Николай", "", 30)));
@@ -56,10 +56,10 @@ public class Exercise2 {
         Predicate<Person> personHasEmptyFirstName = person -> person.getFirstName().isEmpty();
         Predicate<Person> personHasEmptyLastName = person -> person.getLastName().isEmpty();
 
-        Predicate<Person> personHasNotEmptyFirstName = personHasEmptyFirstName.negate();
-        Predicate<Person> personHasNotEmptyLastName = personHasEmptyLastName.negate();
+        Predicate<Person> personHasNotEmptyFirstName = negateUsingLogicalOperator(personHasEmptyFirstName);
+        Predicate<Person> personHasNotEmptyLastName = negateUsingLogicalOperator(personHasEmptyLastName);
 
-        Predicate<Person> personHasNotEmptyLastNameAndFirstName = personHasNotEmptyFirstName.and(personHasNotEmptyLastName);
+        Predicate<Person> personHasNotEmptyLastNameAndFirstName = andUsingLogicalOperator(personHasNotEmptyFirstName, personHasNotEmptyLastName);
 
         assertTrue(personHasNotEmptyLastNameAndFirstName.test(new Person("Алексей", "Доренко", 40)));
         assertFalse(personHasNotEmptyLastNameAndFirstName.test(new Person("Николай", "", 30)));
