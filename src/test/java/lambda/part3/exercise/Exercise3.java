@@ -31,7 +31,7 @@ public class Exercise3 {
 
         private List<R> force() {
             List<R> forcedList = new ArrayList<>();
-            source.forEach(entity -> forcedList.add(mapper.apply(entity)));
+            source.forEach(mapper.andThen(forcedList::add)::apply);
             return forcedList;
         }
 
