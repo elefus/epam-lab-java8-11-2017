@@ -1,12 +1,10 @@
 package streams.part1.exercise;
 
-import lambda.data.Employee;
 import lambda.data.Person;
-import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -33,17 +31,8 @@ public class Exercise2 {
         candidates.put(helen, Status.PENDING);
 
         // TODO реализация
-/*        BiFunction<Person, Status, Status> getBasicOrRiseSalary = (person, status) -> person.getAge() > 21 ? Status.ACCEPTED
-                : Status.DECLINED;
-
-        candidates.compute(alex, getBasicOrRiseSalary);
-        candidates.compute(ivan, getBasicOrRiseSalary);
-        candidates.compute(helen, getBasicOrRiseSalary);*/
-
-        for (Person person : candidates.keySet()) {
-            candidates.compute(person, (person1, status) ->person.getAge() > 21 ? Status.ACCEPTED
-                    : Status.DECLINED );
-        }
+        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED
+                                                                        : Status.DECLINED);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -65,6 +54,8 @@ public class Exercise2 {
             candidates.compute(person, (person1, status) ->person.getAge() > 21 ? Status.ACCEPTED
                     : null);
         }
+        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED
+                                                                        : null);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
