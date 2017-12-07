@@ -26,8 +26,7 @@ public class Exercise1 {
 
         Function<Employee, String> fullNameExtractor = employee -> employee.getPerson().getFullName();
         Function<String, Integer> stringLengthExtractor = String::length;
-        Function<Employee, Integer> fullNameLengthExtractor = employee ->
-                stringLengthExtractor.compose(fullNameExtractor).apply(employee);
+        Function<Employee, Integer> fullNameLengthExtractor = stringLengthExtractor.compose(fullNameExtractor);
         employees.forEach(employee -> lengths.add(fullNameLengthExtractor.apply(employee)));
 
         assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
