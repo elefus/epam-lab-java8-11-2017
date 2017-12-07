@@ -6,7 +6,10 @@ import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -23,10 +26,10 @@ public class Exercise1 {
                 .map(Employee::getPerson).collect(Collectors.toList());
 
         List<Person> expected = Arrays.asList(
-            employees.get(0).getPerson(),
-            employees.get(1).getPerson(),
-            employees.get(4).getPerson(),
-            employees.get(5).getPerson());
+                employees.get(0).getPerson(),
+                employees.get(1).getPerson(),
+                employees.get(4).getPerson(),
+                employees.get(5).getPerson());
         assertEquals(expected, personsEverWorkedInEpam);
     }
 
