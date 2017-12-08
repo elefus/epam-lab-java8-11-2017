@@ -5,6 +5,7 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -15,9 +16,16 @@ public class Exercise4 {
 
     private static class LazyFlatMapHelper<T, R> {
 
+        private List<T> source;
+        private Function<T, List<R>> flatMapFunc;
+
+        public LazyFlatMapHelper(List<T> source, Function<T, List<R>> flatMapFunc) {
+            this.source = source;
+            this.flatMapFunc = flatMapFunc;
+        }
+
         public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
-            // TODO реализация
-            throw new UnsupportedOperationException();
+            return new LazyFlatMapHelper<>(list, Collections::singletonList);
         }
 
         public <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
