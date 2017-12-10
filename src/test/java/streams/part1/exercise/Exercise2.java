@@ -4,6 +4,7 @@ import lambda.data.Person;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -50,12 +51,8 @@ public class Exercise2 {
         candidates.put(helen, Status.PENDING);
 
         // TODO реализация
-        for (Person person : candidates.keySet()) {
-            candidates.compute(person, (person1, status) ->person.getAge() > 21 ? Status.ACCEPTED
-                    : null);
-        }
-        candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED
-                                                                        : null);
+        new HashSet<>(candidates.keySet()).forEach(person -> candidates.compute(person, (key, status) ->
+                person.getAge() > 21 ? Status.ACCEPTED : null));
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
