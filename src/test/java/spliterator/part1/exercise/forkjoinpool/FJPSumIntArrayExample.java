@@ -2,19 +2,22 @@ package spliterator.part1.exercise.forkjoinpool;
 
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 
 public class FJPSumIntArrayExample {
 
-    private static class Asum extends RecursiveAction {
+    private static class Asum extends RecursiveTask<Integer> {
+        private static final int THRESHOLD = 1000;
+
         int[] data;
         int lowBound;
         int highBound;
-        int sum;
 
         Asum(int[] data) {
             this(data, 0, data.length - 1);
@@ -27,34 +30,42 @@ public class FJPSumIntArrayExample {
         }
 
         @Override
-        protected void compute() {
+        protected Integer compute() {
+            int result;
+
             if (lowBound == highBound) {
-                sum = data[lowBound];
+                result = data[lowBound];
             } else if (lowBound > highBound) {
-                sum = 0;
-            } else {
+                result = 0;
+            } else if (highBound - lowBound <= THRESHOLD) {
+                result = 0;
+                for (int i = lowBound; i<=highBound; i++)
+                    result += data[i];
+            }
+            else {
                 int mid = (lowBound + highBound) >> 1;
 
                 Asum leftSUM = new Asum(data, lowBound, mid);
                 Asum rightSUM = new Asum(data, mid + 1, highBound);
 
-                leftSUM.fork();
-                rightSUM.compute();
-                leftSUM.join();
+                rightSUM.fork();
 
-                sum = leftSUM.sum + rightSUM.sum;
+                result = leftSUM.compute() + rightSUM.join();
             }
+
+            return result;
         }
     }
 
     @Test
-    public void test() {
+    public void test() throws ExecutionException, InterruptedException {
         int[] data = IntStream.generate(() -> 1)
                               .limit(100)
                               .toArray();
 
         Asum asum = new Asum(data);
-        new ForkJoinPool().invoke(asum);
-        assertEquals(100, asum.sum);
+        ForkJoinPool.commonPool().invoke(asum);
+        int result = asum.get();
+        assertEquals(100, result);
     }
 }
