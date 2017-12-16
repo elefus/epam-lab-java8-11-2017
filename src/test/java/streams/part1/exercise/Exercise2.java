@@ -1,11 +1,11 @@
 package streams.part1.exercise;
 
-import lambda.data.Employee;
 import lambda.data.Person;
-import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -31,7 +31,9 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
         candidates.put(helen, Status.PENDING);
 
-        // TODO реализация
+        candidates.replaceAll((key, value) ->
+                key.getAge() > 21 ? Status.ACCEPTED : Status.DECLINED
+        );
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -48,7 +50,8 @@ public class Exercise2 {
         candidates.put(ivan, Status.PENDING);
         candidates.put(helen, Status.PENDING);
 
-        // TODO реализация
+        candidates.entrySet().removeIf(candidate -> candidate.getKey().getAge() < 21);
+        candidates.replaceAll((p, s) -> Status.ACCEPTED);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -64,10 +67,9 @@ public class Exercise2 {
         candidates.put(alex, Status.PENDING);
         candidates.put(ivan, Status.PENDING);
 
-        // TODO реализация
-        Status alexStatus = null;
-        Status ivanStatus = null;
-        Status helenStatus = null;
+        Status alexStatus = candidates.getOrDefault(alex, Status.UNKNOWN);
+        Status ivanStatus = candidates.getOrDefault(ivan, Status.UNKNOWN);
+        Status helenStatus = candidates.getOrDefault(helen, Status.UNKNOWN);
 
         assertEquals(Status.PENDING, alexStatus);
         assertEquals(Status.PENDING, ivanStatus);
@@ -87,7 +89,12 @@ public class Exercise2 {
         newValues.put(alex, Status.DECLINED);
         newValues.put(helen, Status.PENDING);
 
-        // TODO реализация
+        newValues = Stream.concat(newValues.entrySet().stream(), oldValues.entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (newStatus, oldStatus) -> newStatus)
+                );
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
