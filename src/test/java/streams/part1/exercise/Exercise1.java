@@ -6,10 +6,7 @@ import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -22,10 +19,12 @@ public class Exercise1 {
     public void findPersonsEverWorkedInEpam() {
         List<Employee> employees = Example1.getEmployees();
 
+        Predicate<Employee> predEverWorked = employee -> employee.getJobHistory()
+                .stream()
+                .anyMatch(job -> "EPAM".equalsIgnoreCase(job.getEmployer()));
+
         List<Person> personsEverWorkedInEpam = employees.stream()
-                .filter(emp -> emp.getJobHistory().stream()
-                        .anyMatch(job -> "EPAM".equalsIgnoreCase(job.getEmployer()))
-                )
+                .filter(predEverWorked)
                 .map(Employee::getPerson)
                 .collect(Collectors.toList());
 
@@ -79,8 +78,10 @@ public class Exercise1 {
     public void findMinimalAgeOfEmployees() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Integer minimalAge = null;
+        Integer minimalAge = employees.stream()
+                .map(emp -> emp.getPerson().getAge())
+                .min(Integer::compareTo)
+                .get();
 
         assertEquals(21, minimalAge.intValue());
     }
