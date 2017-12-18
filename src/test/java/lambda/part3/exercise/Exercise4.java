@@ -30,28 +30,27 @@ public class Exercise4 {
             return new LazyFlatMapHelper<>(list, Arrays::asList);
         }
 
-        <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
+        //map
+        <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> flatMapping) {
             return new LazyFlatMapHelper<>(source, compose(rule, flatMapping));
         }
-
-        <U> LazyFlatMapHelper<T, U> map(Function<R, U> mapping) {
+        //flatMap
+        <R2> LazyFlatMapHelper<T, R2> map(Function<R, R2> mapping) {
             return new LazyFlatMapHelper<>(source, compose(rule, t -> Collections.singletonList(mapping.apply(t))));
         }
-
-        private <U> Function<T, List<U>> compose(Function<T, List<R>> function1, Function<R, List<U>> function2) {
-            return list -> {
-                List<U> result = new ArrayList<>();
-                function1.apply(list).forEach(r -> result.addAll(function2.apply(r)));
-                return result;
-            };
+        //compose
+        private <R2> Function<T, List<R2>> compose(Function<T, List<R>> function1, Function<R, List<R2>> function2) {
+            return list -> iterationHelper(function1.apply(list), function2);
         }
-
+        //force
         List<R> force() {
-            List<R> newSource = new ArrayList<>();
-            for (T s : source) {
-                newSource.addAll(rule.apply(s));
-            }
-            return newSource;
+            return iterationHelper(source, rule);
+        }
+        //iterationHelper for compose and force
+        private <R3, R4> List<R4> iterationHelper(final List<R3> list, Function<R3, List<R4>> function) {
+            List<R4> newList = new ArrayList<>();
+            list.forEach(s -> newList.addAll(function.apply(s)));
+            return newList;
         }
     }
 
