@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -23,9 +24,9 @@ public class Exercise1 {
 
         Function<String, Integer> stringLengthExtractor = String::length;
 
-        Function<Employee, Integer> fullNameLengthExtractor = e -> fullNameExtractor.andThen(stringLengthExtractor).apply(e);
+        Function<Employee, Integer> fullNameLengthExtractor = fullNameExtractor.andThen(stringLengthExtractor);
 
-        employees.forEach(e -> lengths.add(fullNameLengthExtractor.apply(e)));
+        employees.forEach(fullNameLengthExtractor.andThen(lengths::add)::apply);
 
         assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
