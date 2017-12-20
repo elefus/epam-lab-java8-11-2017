@@ -19,12 +19,13 @@ public class Exercise1 {
     public void findPersonsEverWorkedInEpam() {
         List<Employee> employees = Example1.getEmployees();
 
-        Predicate<Employee> predEverWorked = employee -> employee.getJobHistory()
+        Predicate<Employee> predEpam = employee -> employee.getJobHistory()
                 .stream()
-                .anyMatch(job -> "EPAM".equalsIgnoreCase(job.getEmployer()));
+                .map(JobHistoryEntry::getEmployer)
+                .anyMatch("EPAM"::equalsIgnoreCase);
 
         List<Person> personsEverWorkedInEpam = employees.stream()
-                .filter(predEverWorked)
+                .filter(predEpam)
                 .map(Employee::getPerson)
                 .collect(Collectors.toList());
 
@@ -40,8 +41,14 @@ public class Exercise1 {
     public void findPersonsBeganCareerInEpam() {
         List<Employee> employees = Example1.getEmployees();
 
+        /*
         Predicate<Employee> firstJobInEpam = employee -> "EPAM".equalsIgnoreCase(
                 employee.getJobHistory().stream().findFirst().get().getEmployer()
+        );
+        */
+
+        Predicate<Employee> firstJobInEpam = employee -> "EPAM".equalsIgnoreCase(
+                employee.getJobHistory().get(0).getEmployer()
         );
 
         List<Person> startedFromEpam = employees.stream()
