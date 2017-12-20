@@ -89,12 +89,14 @@ public class Exercise2 {
         newValues.put(alex, Status.DECLINED);
         newValues.put(helen, Status.PENDING);
 
-        newValues = Stream.concat(newValues.entrySet().stream(), oldValues.entrySet().stream())
+        /*newValues = Stream.concat(newValues.entrySet().stream(), oldValues.entrySet().stream())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (newStatus, oldStatus) -> newStatus)
-                );
+                );*/
+
+        oldValues.forEach(newValues::putIfAbsent);
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
