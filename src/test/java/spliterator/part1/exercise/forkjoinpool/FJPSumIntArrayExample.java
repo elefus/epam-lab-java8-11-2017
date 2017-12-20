@@ -33,9 +33,7 @@ public class FJPSumIntArrayExample {
         protected Integer compute() {
             int result;
 
-            if (lowBound == highBound) {
-                result = data[lowBound];
-            } else if (highBound - lowBound <= THRESHOLD) {
+            if (highBound - lowBound <= THRESHOLD) {
                 result = 0;
                 for (int i = lowBound; i<=highBound; i++)
                     result += data[i];
