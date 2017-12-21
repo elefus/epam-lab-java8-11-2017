@@ -52,33 +52,61 @@ public class Example2 {
     public void splitPersonsByPositionExperienceUsingReduce() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                                                   .parallel()
+                                                   .flatMap(Example2::employeeToPersonPositionPairsStream)
+                                                   .reduce(new HashMap<>(), Example2::addToMap, Example2::combineMaps);
 
         assertEquals(prepareExpected(employees), result);
     }
 
     private static Stream<PersonPositionPair> employeeToPersonPositionPairsStream(Employee employee) {
-        return null;
+        return employee.getJobHistory()
+                       .stream()
+                       .map(JobHistoryEntry::getPosition)
+                       .map(position -> new PersonPositionPair(employee.getPerson(), position));
     }
 
     private static Map<String, Set<Person>> addToMap(Map<String, Set<Person>> origin, PersonPositionPair pair) {
-        return null;
+        Map<String, Set<Person>> result = new HashMap<>(origin);
+        result.compute(pair.getPosition(), (position, persons) -> {
+            persons = persons == null ? new HashSet<>() : persons;
+            persons.add(pair.getPerson());
+            return persons;
+        });
+        return result;
     }
 
     private static Map<String, Set<Person>> combineMaps(Map<String, Set<Person>> left, Map<String, Set<Person>> right) {
-        return null;
+        Map<String, Set<Person>> result = new HashMap<>(left);
+        right.forEach((position, persons) -> result.merge(position, persons, (leftPersons, rightPersons) -> {
+            leftPersons.addAll(rightPersons);
+            return leftPersons;
+        }));
+        return result;
     }
 
     @Test
     public void splitPersonsByPositionExperienceUsingCollect() {
         List<Employee> employees = Example1.getEmployees();
 
-        BiConsumer<HashMap<String, Set<Person>>, PersonPositionPair> accumulator = null;
-        BiFunction<Set<Person>, Set<Person>, Set<Person>> mergingSets = null;
+        BiConsumer<HashMap<String, Set<Person>>, PersonPositionPair> accumulator =
+                (map, pair) -> map.compute(pair.getPosition(), (position, persons) -> {
+                    persons = persons == null ? new HashSet<>() : persons;
+                    persons.add(pair.getPerson());
+                    return persons;
+                });
+        BiFunction<Set<Person>, Set<Person>, Set<Person>> mergingSets = (leftPersons, rightPersons) -> {
+            leftPersons.addAll(rightPersons);
+            return leftPersons;
+        };
 
-        BiConsumer<HashMap<String, Set<Person>>, HashMap<String, Set<Person>>> combiner = null;
+        BiConsumer<HashMap<String, Set<Person>>, HashMap<String, Set<Person>>> combiner =
+                (left, right) -> right.forEach((position, persons) -> left.merge(position, persons, mergingSets));
 
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                                                   .flatMap(Example2::employeeToPersonPositionPairsStream)
+                                                   .collect(HashMap::new, accumulator, combiner);
 
         assertEquals(prepareExpected(employees), result);
     }
@@ -87,7 +115,11 @@ public class Example2 {
     public void splitPersonsByPositionExperienceUsingGroupingByCollector() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                                                   .flatMap(Example2::employeeToPersonPositionPairsStream)
+                                                   .collect(groupingBy(PersonPositionPair::getPosition,
+                                                                       mapping(PersonPositionPair::getPerson,
+                                                                               toSet())));
 
         assertEquals(prepareExpected(employees), result);
     }
