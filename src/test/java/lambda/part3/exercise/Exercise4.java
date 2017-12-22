@@ -31,24 +31,26 @@ public class Exercise4 {
 
         //map
         <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> flatMapping) {
-            return new LazyFlatMapHelper<>(source, t -> iterationHelper(rule.apply(t), flatMapping));
+            return new LazyFlatMapHelper<>(source, rule.andThen(iterationHelper(flatMapping)));
         }
 
         //flatMap
         <R2> LazyFlatMapHelper<T, R2> map(Function<R, R2> mapping) {
-            return new LazyFlatMapHelper<>(source, t -> iterationHelper(rule.apply(t), mapping.andThen(Collections::singletonList)));
+            return new LazyFlatMapHelper<>(source, rule.andThen(iterationHelper(mapping.andThen(Collections::singletonList))));
         }
 
         //force
         List<R> force() {
-            return iterationHelper(source, rule);
+            return iterationHelper(rule).apply(source);
         }
 
-        //iterationHelper for compose and force
-        private <R3, R4> List<R4> iterationHelper(final List<R3> list, Function<R3, List<R4>> function) {
-            List<R4> newList = new ArrayList<>();
-            list.forEach(function.andThen(newList::addAll)::apply);
-            return newList;
+        //iterationHelper for map, flatMap and force
+        private <R3, R4> Function<List<R3>, List<R4>> iterationHelper(Function<R3, List<R4>> function) {
+            return list -> {
+                List<R4> newList = new ArrayList<>();
+                list.forEach(function.andThen(newList::addAll)::apply);
+                return newList;
+            };
         }
     }
 
