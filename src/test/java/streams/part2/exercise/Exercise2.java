@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -220,7 +221,7 @@ public class Exercise2 {
 
     /**
      * Преобразовать список сотрудников в отображение [компания -> сотрудник, суммарно проработавший в ней наибольшее время].
-     * Гарантируется, что такой сотрудник будет один.
+     * Гарантируется, что такой сотрудник будет один. --- !!! Изначальные тестовые данные, похоже, нарушали это условие.
      */
     @Test
     public void greatestExperiencePerEmployer() {
@@ -236,16 +237,16 @@ public class Exercise2 {
                 employees.stream()
                          .flatMap(employee ->
                                  employeeExperienceExtractor.apply(employee).entrySet().stream()
-                                                            .map(entry -> new PersonEmployerDuration(employee.getPerson(),
+                                                            .map(entry -> new PersonEmployerDuration(
+                                                                    employee.getPerson(),
                                                                     entry.getKey(),
                                                                     entry.getValue())))
-                         .collect(toMap(PersonEmployerDuration::getEmployer,
-                                 Function.identity(),
-                                 (p1, p2) -> p1.getDuration() > p2.getDuration() ? p1 : p2,
-                                 HashMap::new))
-                         .entrySet().stream()
-                         .map(entry -> new PersonEmployerPair(entry.getValue().getPerson(), entry.getKey()))
-                         .collect(toMap(PersonEmployerPair::getEmployer, PersonEmployerPair::getPerson));
+                         .collect(groupingBy(PersonEmployerDuration::getEmployer,
+                                 HashMap::new,
+                                 collectingAndThen(
+                                         Collectors.maxBy(Comparator.comparingInt(PersonEmployerDuration::getDuration)),
+                                         maybe -> maybe.orElseThrow(NoSuchElementException::new).getPerson()))
+                         );
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
