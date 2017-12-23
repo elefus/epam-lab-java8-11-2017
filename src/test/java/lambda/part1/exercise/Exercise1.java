@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 import lambda.data.Person;
-import lombok.NonNull;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -23,7 +22,7 @@ public class Exercise1 {
 
         Comparator<Person> comparatorByLastName = new Comparator<Person>() {
             @Override
-            public int compare(@NonNull Person first, @NonNull Person second) {
+            public int compare(Person first, Person second) {
                 return Integer.compare(first.getAge(), second.getAge());
             }
         };
@@ -43,7 +42,7 @@ public class Exercise1 {
 
         Arrays.sort(persons, new Comparator<Person>() {
             @Override
-            public int compare(@NonNull Person first, @NonNull Person second) {
+            public int compare(Person first, Person second) {
                 return Integer.compare(first.getAge(), second.getAge());
             }
         });
@@ -62,7 +61,7 @@ public class Exercise1 {
 
         Arrays.sort(persons, new Comparator<Person>() {
             @Override
-            public int compare(@NonNull Person first, @NonNull Person second) {
+            public int compare(Person first, Person second) {
                 int result;
                 return ( result = first.getLastName().compareTo(second.getLastName()) ) == 0 ?
                         first.getFirstName().compareTo(second.getFirstName()) :
