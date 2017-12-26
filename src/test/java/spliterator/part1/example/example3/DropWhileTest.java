@@ -15,6 +15,15 @@ public class DropWhileTest {
         long count = new AdvancedStreamImpl<>(sourceStream).dropWhile(elem -> elem < 'c')
                                                            .count();
 
+        assertEquals(5, count);
+    }
+    @Test
+    public void dropLessThanCUnsorted() {
+        Stream<Character> sourceStream = Stream.of('a', 'b', 'd', 'a', 'a', 'a');
+
+        long count = new AdvancedStreamImpl<>(sourceStream).dropWhile(elem -> elem < 'c')
+                                                           .count();
+
         assertEquals(4, count);
     }
 }
