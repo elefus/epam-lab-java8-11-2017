@@ -33,13 +33,7 @@ public class Example2 {
 
     // (Person -> String) -> (Person -> (String -> boolean))
     private static Function<Person, Predicate<String>> stringPropertyChecker(Function<Person, String> propertyExtractor) {
-        return person -> {
-            Predicate<String> checker = checkingValue -> {
-                boolean isEquals = Objects.equals(propertyExtractor.apply(person), checkingValue);
-                return isEquals;
-            };
-            return checker;
-        };
+        return person -> checkingValue -> Objects.equals(propertyExtractor.apply(person), checkingValue);
     }
 
     @Test
