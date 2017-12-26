@@ -1,7 +1,6 @@
 package spliterator.part1.exercise.forkjoinpool;
 
 import org.junit.Test;
-import spliterator.part1.example.forkjoinpool.FJPQuickSortExample;
 
 import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
@@ -52,7 +51,7 @@ public class FJPSumIntArrayExample {
                 threadCount.addAndGet(1);
 
                 FJPSumIntArrayExample.ForkJoinSumArrayTask right = new FJPSumIntArrayExample.ForkJoinSumArrayTask(data, pivot + 1, toInclusive);
-                return left.join() + right.compute();
+                return right.compute() + left.join();
             }
         }
     }
