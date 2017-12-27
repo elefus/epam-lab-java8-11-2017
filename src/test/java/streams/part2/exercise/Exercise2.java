@@ -1,11 +1,16 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -71,12 +76,48 @@ public class Exercise2 {
      *    "T-Systems" -> [ {Анна Светличная 21} ]
      * ]
      */
+
+    private static class EmployerPersonPair {
+        private final String employer;
+        private final Person person;
+
+        EmployerPersonPair(String employer, Person person) {
+            this.employer = employer;
+            this.person = person;
+        }
+
+        Person getPerson() {
+            return person;
+        }
+
+        String getEmployer() {
+            return employer;
+        }
+    }
+
+    private static class EmployerPersonDuration extends EmployerPersonPair {
+        private final int duration;
+
+        EmployerPersonDuration(String employer, Person person, int duration) {
+            super(employer, person);
+            this.duration = duration;
+        }
+
+        int getDuration() {
+            return duration;
+        }
+    }
+
     @Test
     public void employersStuffList() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(JobHistoryEntry::getEmployer)
+                        .map(employer -> new EmployerPersonPair(employer, employee.getPerson())))
+                .collect(Collectors.groupingBy(EmployerPersonPair::getEmployer,
+                        Collectors.mapping(EmployerPersonPair::getPerson, Collectors.toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -150,8 +191,10 @@ public class Exercise2 {
     public void indexByFirstEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .map(employee -> new EmployerPersonPair(employee.getJobHistory().get(0).getEmployer(), employee.getPerson()))
+                .collect(Collectors.groupingBy(EmployerPersonPair::getEmployer,
+                        Collectors.mapping(EmployerPersonPair::getPerson, Collectors.toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -175,8 +218,17 @@ public class Exercise2 {
     public void greatestExperiencePerEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Person> result = null;
+        Map<String, Person> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .collect(Collectors.toMap(JobHistoryEntry::getEmployer,
+                                JobHistoryEntry::getDuration,
+                                Integer::sum))
+                        .entrySet().stream()
+                        .map(entry -> new EmployerPersonDuration(entry.getKey(), employee.getPerson(), entry.getValue())))
+                .collect(Collectors.groupingBy(EmployerPersonDuration::getEmployer, HashMap::new,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparingInt(EmployerPersonDuration::getDuration)),
+                                entry->entry.get().getPerson())));
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
@@ -186,4 +238,5 @@ public class Exercise2 {
         expected.put("T-Systems", employees.get(5).getPerson());
         assertEquals(expected, result);
     }
+
 }
