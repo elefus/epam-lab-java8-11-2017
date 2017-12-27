@@ -87,7 +87,7 @@ public class Exercise4 {
                 .map(c -> (int) c)
                 .force();
 
-        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
+        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "tester", "QA", "QA", "QA", "dev"), codes);
     }
 
     private static List<Integer> calcCodes(String...strings) {
