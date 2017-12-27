@@ -4,6 +4,7 @@ import lambda.data.Employee;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -62,7 +63,7 @@ public class Example2 {
                                           .filter(Example2::WorkedInEpamMoreThenYearAtOnePosition)
                                           .getSource();
 
-        assertEquals(Collections.singletonList(employees.get(0)), result);
+        assertEquals(Arrays.asList(employees.get(0), employees.get(5)), result);
     }
 
     private static boolean hasDeveloperExperience(Employee employee) {
