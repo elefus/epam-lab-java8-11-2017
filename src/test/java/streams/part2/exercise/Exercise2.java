@@ -113,7 +113,6 @@ public class Exercise2 {
                         .map(j -> new Pair(e.getPerson(), j)))
                 .collect(groupingBy(Pair::getEmployer, mapping(Pair::getPerson, toSet())));
 
-
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
                 employees.get(0).getPerson(),

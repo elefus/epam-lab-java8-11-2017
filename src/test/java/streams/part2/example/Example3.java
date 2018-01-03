@@ -1,15 +1,14 @@
 package streams.part2.example;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
+import streams.part2.example.data.PersonDurationPair;
 import streams.part2.example.data.PersonPositionDuration;
 
 import java.util.*;
-import java.util.function.Function;
-
-import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
 
@@ -61,7 +60,19 @@ public class Example3 {
     public void getTheCoolestByPositionUsingToMap() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Person> coolest = null;
+        Map<String, Person> coolest = employees.stream()
+                                               .flatMap(employee -> employee.getJobHistory()
+                                                                            .stream()
+                                                                            .collect(toMap(JobHistoryEntry::getPosition,
+                                                                                           entry -> new PersonDurationPair(employee.getPerson(), entry.getDuration()),
+                                                                                           (pair1, pair2) -> new PersonDurationPair(pair1.getPerson(), pair1.getDuration() + pair2.getDuration())))
+                                                                            .entrySet()
+                                                                            .stream())
+                                               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (pair1, pair2) -> pair1.getDuration() > pair2.getDuration() ? pair1 : pair2))
+                                               .entrySet()
+                                               .stream()
+                                               .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getPerson()));
+
 
         assertEquals(prepareExpected(employees), coolest);
     }
@@ -70,7 +81,20 @@ public class Example3 {
     public void getTheCoolestByPositionUsingGroupingBy() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Person> coolest = null;
+        Map<String, Person> coolest = employees.stream()
+                                               .parallel()
+                                               .flatMap(employee -> employee.getJobHistory()
+                                                                            .stream()
+                                                                            .collect(groupingBy(JobHistoryEntry::getPosition, summingInt(JobHistoryEntry::getDuration)))
+                                                                            .entrySet()
+                                                                            .stream()
+                                                                            .map(entry -> new PersonPositionDuration(employee.getPerson(), entry.getKey(), entry.getValue())))
+                                               .collect(groupingBy(PersonPositionDuration::getPosition,
+                                                                   collectingAndThen(maxBy(Comparator.comparingInt(PersonPositionDuration::getDuration)),
+                                                                                     entry -> entry.orElseThrow(IllegalStateException::new).getPerson())));
+
+        assertEquals(prepareExpected(employees), coolest);
+
     }
 
     private static Map<String, Person> prepareExpected(List<Employee> employees) {

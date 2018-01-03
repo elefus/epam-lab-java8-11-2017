@@ -53,6 +53,7 @@ public class Example2 {
         List<Employee> employees = Example1.getEmployees();
 
         Map<String, Set<Person>> result = employees.stream()
+                                                   .parallel()
                                                    .flatMap(Example2::employeeToPersonPositionPairsStream)
                                                    .reduce(new HashMap<>(), Example2::addToMap, Example2::combineMaps);
 
@@ -67,20 +68,22 @@ public class Example2 {
     }
 
     private static Map<String, Set<Person>> addToMap(Map<String, Set<Person>> origin, PersonPositionPair pair) {
-        origin.compute(pair.getPosition(), (position, persons) -> {
+        Map<String, Set<Person>> result = new HashMap<>(origin);
+        result.compute(pair.getPosition(), (position, persons) -> {
             persons = persons == null ? new HashSet<>() : persons;
             persons.add(pair.getPerson());
             return persons;
         });
-        return origin;
+        return result;
     }
 
     private static Map<String, Set<Person>> combineMaps(Map<String, Set<Person>> left, Map<String, Set<Person>> right) {
-        right.forEach((position, persons) -> left.merge(position, persons, (leftPersons, rightPersons) -> {
+        Map<String, Set<Person>> result = new HashMap<>(left);
+        right.forEach((position, persons) -> result.merge(position, persons, (leftPersons, rightPersons) -> {
             leftPersons.addAll(rightPersons);
             return leftPersons;
         }));
-        return left;
+        return result;
     }
 
     @Test
@@ -89,10 +92,11 @@ public class Example2 {
 
         BiConsumer<HashMap<String, Set<Person>>, PersonPositionPair> accumulator =
                 (map, pair) -> map.compute(pair.getPosition(), (position, persons) -> {
-                                                                    persons = persons == null ? new HashSet<>() : persons;
-                                                                    persons.add(pair.getPerson());
-                                                                    return persons;
-                                                                });
+                    persons = persons == null ? new HashSet<>() : persons;
+                    persons.add(pair.getPerson());
+                    return persons;
+                });
+
         BiFunction<Set<Person>, Set<Person>, Set<Person>> mergingSets = (leftPersons, rightPersons) -> {
             leftPersons.addAll(rightPersons);
             return leftPersons;

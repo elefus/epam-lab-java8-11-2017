@@ -63,14 +63,16 @@ public class Exercise1 {
     public void findAllCompanies() {
         List<Employee> employees = Example1.getEmployees();
 
-        Set<String> companies = employees
-                .stream()
-                .flatMap(e -> e.getJobHistory().stream())
-                .map(JobHistoryEntry::getEmployer)
-                .distinct()
-                .collect(Collectors.toSet());
+        // TODO реализация
+        Set<String> companies = null;
 
-        assertEquals(new HashSet<>(Arrays.asList("EPAM", "google", "yandex", "mail.ru", "T-Systems")), companies);
+        Set<String> expected = new HashSet<>();
+        expected.add("EPAM");
+        expected.add("google");
+        expected.add("yandex");
+        expected.add("mail.ru");
+        expected.add("T-Systems");
+        assertEquals(expected, companies);
     }
 
     @Test
