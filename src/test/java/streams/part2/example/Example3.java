@@ -9,7 +9,6 @@ import streams.part2.example.data.PersonDurationPair;
 import streams.part2.example.data.PersonPositionDuration;
 
 import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
 
@@ -74,6 +73,7 @@ public class Example3 {
                                                .stream()
                                                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getPerson()));
 
+
         assertEquals(prepareExpected(employees), coolest);
     }
 
@@ -94,6 +94,7 @@ public class Example3 {
                                                                                      entry -> entry.orElseThrow(IllegalStateException::new).getPerson())));
 
         assertEquals(prepareExpected(employees), coolest);
+
     }
 
     private static Map<String, Person> prepareExpected(List<Employee> employees) {

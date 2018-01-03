@@ -96,6 +96,7 @@ public class Example2 {
                     persons.add(pair.getPerson());
                     return persons;
                 });
+
         BiFunction<Set<Person>, Set<Person>, Set<Person>> mergingSets = (leftPersons, rightPersons) -> {
             leftPersons.addAll(rightPersons);
             return leftPersons;
