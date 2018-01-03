@@ -23,17 +23,6 @@ public class Person implements Comparable<Person>, Serializable {
         this.age = age;
     }
 
-    /**
-     * Статический фабричный метод.
-     * @param firstName Имя.
-     * @param lastName Фамилия.
-     * @param age Возраст.
-     * @return Созданный объект.
-     */
-    public static Person create(String firstName, String lastName, int age) {
-        return new Person(firstName, lastName, age);
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -44,18 +33,6 @@ public class Person implements Comparable<Person>, Serializable {
 
     public int getAge(Person this) {
         return age;
-    }
-
-    public Person withFirstName(String firstName) {
-        return new Person(firstName, lastName, age);
-    }
-
-    public Person withLastName(String lastName) {
-        return new Person(firstName, lastName, age);
-    }
-
-    public Person withAge(int age) {
-        return new Person(firstName, lastName, age);
     }
 
     @Override
