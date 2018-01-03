@@ -5,7 +5,6 @@ import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +35,6 @@ public class Exercise1 {
             lengths.add(fullNameLengthExtractor(employee));
         }
 
-        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 }
