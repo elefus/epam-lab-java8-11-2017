@@ -51,7 +51,7 @@ public class Exercise2 {
         candidates.put(helen, Status.PENDING);
 
         // TODO реализация
-        BiFunction<Person, Status, Status> moreThan21 = (person, status) -> person.getAge() > 21 ? Status.ACCEPTED : null;
+       candidates.replaceAll((person, status) -> person.getAge() > 21 ? Status.ACCEPTED : null);
 
         assertEquals(Status.ACCEPTED, candidates.get(ivan));
         assertEquals(Status.ACCEPTED, candidates.get(helen));
@@ -91,7 +91,7 @@ public class Exercise2 {
         newValues.put(helen, Status.PENDING);
 
         // TODO реализация
-        newValues.forEach((key, value) -> newValues.merge(key, value, (oldStat, newStat) -> !oldStat.equals(newStat) ? newValues.put(key, newStat) : oldStat));
+        oldValues.forEach(newValues::putIfAbsent);
 
         assertEquals(Status.DECLINED, newValues.get(alex));
         assertEquals(Status.ACCEPTED, newValues.get(ivan));
