@@ -1,11 +1,14 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,7 +20,12 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Long hours = null;
+        Long hours = employees.stream()
+                .map(Employee::getJobHistory)
+                .flatMap(Collection::stream)
+                .filter(j -> "EPAM".equals(j.getEmployer()))
+                .mapToLong(JobHistoryEntry::getDuration)
+                .sum();
 
         assertEquals(18, hours.longValue());
     }
@@ -27,7 +35,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Set<Person> workedAsQa = null;
+        Set<Person> workedAsQa = employees.stream()
+                .filter(e -> e.getJobHistory().stream().map(JobHistoryEntry::getPosition).anyMatch("QA"::equals))
+                .map(Employee::getPerson)
+                .collect(Collectors.toSet());
 
         Set<Person> expected = new HashSet<>(Arrays.asList(
                 employees.get(2).getPerson(),
@@ -42,7 +53,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        String result = null;
+        String result = employees.stream()
+                .map(Employee::getPerson)
+                .map(Person::getFullName)
+                .collect(Collectors.joining("\n"));
 
         String expected = "Иван Мельников\n"
                         + "Александр Дементьев\n"
@@ -58,7 +72,18 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Function<Employee, String> getFirstPosition = e -> e.getJobHistory().get(0).getPosition();
+        // Maybe it could be written simplest, but I don't find a way
+        Function<Employee, Set<Person>> getPersons = e -> new TreeSet<>(Collections.singleton(e.getPerson()));
+
+        Map<String, Set<Person>> result = employees.stream()
+                .collect(Collectors.toMap(getFirstPosition,
+                        getPersons,
+                        (oldVal, newVal) -> {
+                            oldVal.addAll(newVal);
+                            return oldVal;
+                        })
+                );
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("dev", Collections.singleton(employees.get(0).getPerson()));
@@ -76,7 +101,10 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Function<Employee, String> getFirstPosition = e -> e.getJobHistory().get(0).getPosition();
+
+        Map<String, Set<Person>> result = employees.stream()
+                .collect(Collectors.groupingBy(getFirstPosition, Collectors.mapping(Employee::getPerson, Collectors.toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("dev", Collections.singleton(employees.get(0).getPerson()));
