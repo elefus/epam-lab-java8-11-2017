@@ -7,8 +7,11 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import streams.part2.example.data.PersonPositionPair;
 
 import static org.junit.Assert.assertEquals;
 
@@ -73,17 +76,15 @@ public class Exercise1 {
 
         // TODO реализация
         Function<Employee, String> getFirstPosition = e -> e.getJobHistory().get(0).getPosition();
-        // Maybe it could be written simplest, but I don't find a way
-        Function<Employee, Set<Person>> getPersons = e -> new TreeSet<>(Collections.singleton(e.getPerson()));
+        Function<Employee, Set<Person>> getPersons = e -> Collections.singleton(e.getPerson());
+        BinaryOperator<Set<Person>> mergeSets = (set1, set2) -> {
+            Set<Person> merge = new HashSet<>(set1);
+            merge.addAll(set2);
+            return merge;
+        };
 
         Map<String, Set<Person>> result = employees.stream()
-                .collect(Collectors.toMap(getFirstPosition,
-                        getPersons,
-                        (oldVal, newVal) -> {
-                            oldVal.addAll(newVal);
-                            return oldVal;
-                        })
-                );
+                .collect(Collectors.toMap(getFirstPosition, getPersons, mergeSets));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("dev", Collections.singleton(employees.get(0).getPerson()));
