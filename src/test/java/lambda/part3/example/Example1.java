@@ -28,7 +28,11 @@ public class Example1 {
                     Arrays.asList(
                             new JobHistoryEntry(1, "tester", "EPAM"),
                             new JobHistoryEntry(1, "dev", "EPAM"),
-                            new JobHistoryEntry(1, "dev", "google")
+                            // Вероятно ниже была ошибка в тестовых данных - был 1 год в google,
+                            // что совпадало с Иваном Мельниковым.
+                            // Поэтому для решения streams.p2.exc2.3 пришлось это исправить,
+                            // т.к. там в условии задачи написано, что такой сотрудник д.б. один.
+                            new JobHistoryEntry(2, "dev", "google")
                     )),
             new Employee(
                     new Person("Дмитрий", "Осинов", 40),

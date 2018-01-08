@@ -1,5 +1,11 @@
 package streams.part1.exercise;
 
+import lambda.data.Employee;
+import lambda.data.Person;
+import lambda.part3.example.Example1;
+import org.junit.Test;
+
+import java.util.*;
 import lambda.data.Person;
 import org.junit.Test;
 
