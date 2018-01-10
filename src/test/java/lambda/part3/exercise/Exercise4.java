@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,25 +30,36 @@ public class Exercise4 {
         }
 
         <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
-            Function<List<R>, List<U>> mapping = list ->
-                    list.stream()
-                            .map(flatMapping)
-                            .flatMap(List::stream)
-                            .collect(Collectors.toList());
-            return new LazyFlatMapHelper<>(source, function.andThen(mapping));
+            Function<List<R>, List<U>> mapping = list -> {
+                List<U> result = new ArrayList<>();
+                list.forEach(e -> result.addAll(flatMapping.apply(e)));
+                return result;
+            };
+            return new LazyFlatMapHelper<>(source, function.andThen(flatMapFunction(flatMapping)));
         }
 
         <U> LazyFlatMapHelper<T, U> map(Function<R, U> mapping) {
-            return new LazyFlatMapHelper<>(source, function.andThen(list ->
-                    list.stream()
-                            .map(mapping)
-                            .collect(Collectors.toList())));
+            return new LazyFlatMapHelper<>(source, function.andThen(mapFunction(mapping)));
         }
 
         List<R> force() {
-            List<R> result = new ArrayList<>();
-            source.forEach(t -> result.addAll(function.apply(t)));
-            return result;
+            return flatMapFunction(function).apply(source);
+        }
+
+        private <U, V> Function<List<U>, List<V>> flatMapFunction(Function<U, List<V>> flatMapping) {
+            return list -> {
+                List<V> result = new ArrayList<>();
+                list.forEach(e -> result.addAll(flatMapping.apply(e)));
+                return result;
+            };
+        }
+
+        private <U, V> Function<List<U>, List<V>> mapFunction(Function<U, V> mapping) {
+            return list -> {
+                List<V> result = new ArrayList<>();
+                list.forEach(e -> result.add(mapping.apply(e)));
+                return result;
+            };
         }
     }
 
