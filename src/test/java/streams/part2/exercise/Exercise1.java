@@ -55,8 +55,7 @@ public class Exercise1 {
         String result = employees.stream()
                 .map(Employee::getPerson)
                 .map(Person::getFullName)
-                .reduce((s1, s2) -> s1 + "\n" + s2)
-                .orElse("");
+                .collect(Collectors.joining("\n"));
 
         String expected = "Иван Мельников\n"
                         + "Александр Дементьев\n"
@@ -74,11 +73,14 @@ public class Exercise1 {
         Map<String, Set<Person>> result = employees.stream()
                 .collect(Collectors.toMap(
                         e -> e.getJobHistory().get(0).getPosition(),
-                        e -> Collections.singleton(e.getPerson()),
-                        (set1, set2) -> {
-                            HashSet<Person> set = new HashSet<>(set1);
-                            set.addAll(set2);
+                        e -> {
+                            Set<Person> set = new HashSet<>();
+                            set.add(e.getPerson());
                             return set;
+                        },
+                        (set1, set2) -> {
+                            set1.addAll(set2);
+                            return set1;
                         }));
 
         Map<String, Set<Person>> expected = new HashMap<>();
