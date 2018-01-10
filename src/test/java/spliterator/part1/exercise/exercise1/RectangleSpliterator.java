@@ -26,7 +26,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
     @Override
     public long estimateSize() {
-        return data.length;
+        return fence - index;
     }
 
     @Override
