@@ -1,36 +1,46 @@
 package spliterator.part1.exercise.exercise1;
 
+import java.util.Arrays;
 import java.util.Spliterators;
 import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 
 public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
+    private int[][] data;
+    private int index;
+    private int fence;
+
     public RectangleSpliterator(int[][] array) {
-        super(0, 0);
-        throw new UnsupportedOperationException();
+        super(array.length, 0);
+
+        this.data = array;
+        this.index = 0;
+        this.fence = array.length;
     }
 
     @Override
     public OfInt trySplit() {
-        // TODO реализация
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("We don't use this spliterator in parallel stream");
     }
 
     @Override
     public long estimateSize() {
-        // TODO реализация
-        throw new UnsupportedOperationException();
+        return data.length;
     }
 
     @Override
     public boolean tryAdvance(IntConsumer action) {
-        // TODO реализация
-        throw new UnsupportedOperationException();
+        if (index >= fence)
+            return false;
+
+        IntStream stream = Arrays.stream(data[index++]);
+        stream.forEach(action);
+        return true;
     }
 
     @Override
     public void forEachRemaining(IntConsumer action) {
-        // TODO реализация
-        throw new UnsupportedOperationException();
+        super.forEachRemaining(action);
     }
 }
