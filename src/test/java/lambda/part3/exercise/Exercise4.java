@@ -9,7 +9,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -31,25 +30,25 @@ public class Exercise4 {
             return new LazyFlatMapHelper<>(list, Collections::singletonList);
         }
 
-        public LazyFlatMapHelper<T, R> map(Function<T, R> mapping) {
-            return new LazyFlatMapHelper<>(source, entity ->
-                    applyToList(this.flatMapping.apply(entity),
-                            (element, result) -> result.add(mapping.apply(element))));
+        public <U> LazyFlatMapHelper<T, U> map(Function<R, U> mapping) {
+            return new LazyFlatMapHelper<>(source, entity -> {
+                List<U> results = new ArrayList<>();
+                for (R element : flatMapping.apply(entity)) results.add(mapping.apply(element));
+                return results;
+            });
         }
 
-        public LazyFlatMapHelper<T, R> flatMap(Function<T, List<R>> flatMapping) {
-            return new LazyFlatMapHelper<>(source, entity ->
-                    applyToList(this.flatMapping.apply(entity),
-                            (element, result) -> result.addAll(flatMapping.apply(element))));
+        public <U> LazyFlatMapHelper<T, U> flatMap(Function<R, List<U>> flatMapping) {
+            return new LazyFlatMapHelper<>(source, entity -> {
+                List<U> results = new ArrayList<>();
+                for (R element : this.flatMapping.apply(entity)) results.addAll(flatMapping.apply(element));
+                return results;
+            });
         }
 
         public List<R> force() {
-            return applyToList(source, (element, result) -> result.addAll(flatMapping.apply(element)));
-        }
-
-        public <U> List<R> applyToList(List<R> source, BiFunction<T, List<R>, Boolean> function){
             List<R> result = new ArrayList<>();
-            source.forEach(entity -> function.apply(entity, result));
+            for (T element : source) result.addAll(flatMapping.apply(element));
             return result;
         }
     }
