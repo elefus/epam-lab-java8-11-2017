@@ -1,22 +1,18 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
-import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
-import streams.part2.example.data.PersonEmployerDuration;
-import streams.part2.example.data.PersonEmployerPair;
-import streams.part2.example.data.PersonPositionDuration;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @see <a href="https://youtu.be/kxgo7Y4cdA8">Через тернии к лямбдам, часть 1</a>
  * @see <a href="https://youtu.be/JRBWBJ6S4aU">Через тернии к лямбдам, часть 2</a>
+ *
  * @see <a href="https://youtu.be/O8oN4KSZEXE">Stream API, часть 1</a>
  * @see <a href="https://youtu.be/i0Jr2l3jrDA">Stream API, часть 2</a>
  */
@@ -25,65 +21,62 @@ public class Exercise2 {
 
     /**
      * Преобразовать список сотрудников в отображение [компания -> множество людей, когда-либо работавших в этой компании].
-     * <p>
+     *
      * Входные данные:
      * [
-     * {
-     * {Иван Мельников 30},
-     * [
-     * {2, dev, "EPAM"},
-     * {1, dev, "google"}
+     *     {
+     *         {Иван Мельников 30},
+     *         [
+     *             {2, dev, "EPAM"},
+     *             {1, dev, "google"}
+     *         ]
+     *     },
+     *     {
+     *         {Александр Дементьев 28},
+     *         [
+     *             {2, tester, "EPAM"},
+     *             {1, dev, "EPAM"},
+     *             {1, dev, "google"}
+     *         ]
+     *     },
+     *     {
+     *         {Дмитрий Осинов 40},
+     *         [
+     *             {3, QA, "yandex"},
+     *             {1, QA, "EPAM"},
+     *             {1, dev, "mail.ru"}
+     *         ]
+     *     },
+     *     {
+     *         {Анна Светличная 21},
+     *         [
+     *             {1, tester, "T-Systems"}
+     *         ]
+     *     }
      * ]
-     * },
-     * {
-     * {Александр Дементьев 28},
-     * [
-     * {2, tester, "EPAM"},
-     * {1, dev, "EPAM"},
-     * {1, dev, "google"}
-     * ]
-     * },
-     * {
-     * {Дмитрий Осинов 40},
-     * [
-     * {3, QA, "yandex"},
-     * {1, QA, "EPAM"},
-     * {1, dev, "mail.ru"}
-     * ]
-     * },
-     * {
-     * {Анна Светличная 21},
-     * [
-     * {1, tester, "T-Systems"}
-     * ]
-     * }
-     * ]
-     * <p>
+     *
      * Выходные данные:
      * [
-     * "EPAM" -> [
-     * {Иван Мельников 30},
-     * {Александр Дементьев 28},
-     * {Дмитрий Осинов 40}
-     * ],
-     * "google" -> [
-     * {Иван Мельников 30},
-     * {Александр Дементьев 28}
-     * ],
-     * "yandex" -> [ {Дмитрий Осинов 40} ]
-     * "mail.ru" -> [ {Дмитрий Осинов 40} ]
-     * "T-Systems" -> [ {Анна Светличная 21} ]
+     *    "EPAM" -> [
+     *       {Иван Мельников 30},
+     *       {Александр Дементьев 28},
+     *       {Дмитрий Осинов 40}
+     *    ],
+     *    "google" -> [
+     *       {Иван Мельников 30},
+     *       {Александр Дементьев 28}
+     *    ],
+     *    "yandex" -> [ {Дмитрий Осинов 40} ]
+     *    "mail.ru" -> [ {Дмитрий Осинов 40} ]
+     *    "T-Systems" -> [ {Анна Светличная 21} ]
      * ]
      */
     @Test
     public void employersStuffList() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Set<Person>> result = employees.stream()
-                .flatMap(employee -> employee.getJobHistory().stream().map(JobHistoryEntry::getEmployer)
-                        .map(employer -> new PersonEmployerPair(employee.getPerson(), employer)))
-                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
-                        Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toSet())));
+        // TODO реализация
+        Map<String, Set<Person>> result = null;
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -107,61 +100,58 @@ public class Exercise2 {
 
     /**
      * Преобразовать список сотрудников в отображение [компания -> множество людей, начавших свою карьеру в этой компании].
-     * <p>
+     *
      * Пример.
-     * <p>
+     *
      * Входные данные:
      * [
-     * {
-     * {Иван Мельников 30},
-     * [
-     * {2, dev, "EPAM"},
-     * {1, dev, "google"}
+     *     {
+     *         {Иван Мельников 30},
+     *         [
+     *             {2, dev, "EPAM"},
+     *             {1, dev, "google"}
+     *         ]
+     *     },
+     *     {
+     *         {Александр Дементьев 28},
+     *         [
+     *             {2, tester, "EPAM"},
+     *             {1, dev, "EPAM"},
+     *             {1, dev, "google"}
+     *         ]
+     *     },
+     *     {
+     *         {Дмитрий Осинов 40},
+     *         [
+     *             {3, QA, "yandex"},
+     *             {1, QA, "EPAM"},
+     *             {1, dev, "mail.ru"}
+     *         ]
+     *     },
+     *     {
+     *         {Анна Светличная 21},
+     *         [
+     *             {1, tester, "T-Systems"}
+     *         ]
+     *     }
      * ]
-     * },
-     * {
-     * {Александр Дементьев 28},
-     * [
-     * {2, tester, "EPAM"},
-     * {1, dev, "EPAM"},
-     * {1, dev, "google"}
-     * ]
-     * },
-     * {
-     * {Дмитрий Осинов 40},
-     * [
-     * {3, QA, "yandex"},
-     * {1, QA, "EPAM"},
-     * {1, dev, "mail.ru"}
-     * ]
-     * },
-     * {
-     * {Анна Светличная 21},
-     * [
-     * {1, tester, "T-Systems"}
-     * ]
-     * }
-     * ]
-     * <p>
+     *
      * Выходные данные:
      * [
-     * "EPAM" -> [
-     * {Иван Мельников 30},
-     * {Александр Дементьев 28}
-     * ],
-     * "yandex" -> [ {Дмитрий Осинов 40} ]
-     * "T-Systems" -> [ {Анна Светличная 21} ]
+     *    "EPAM" -> [
+     *       {Иван Мельников 30},
+     *       {Александр Дементьев 28}
+     *    ],
+     *    "yandex" -> [ {Дмитрий Осинов 40} ]
+     *    "T-Systems" -> [ {Анна Светличная 21} ]
      * ]
      */
     @Test
     public void indexByFirstEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Set<Person>> result = employees.stream()
-                .map(employee ->
-                        new PersonEmployerPair(employee.getPerson(), employee.getJobHistory().get(0).getEmployer()))
-                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
-                        Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toSet())));
+        // TODO реализация
+        Map<String, Set<Person>> result = null;
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -185,13 +175,8 @@ public class Exercise2 {
     public void greatestExperiencePerEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        Map<String, Person> result = employees.stream()
-                .flatMap(employee -> employee.getJobHistory().stream()
-                        .collect(Collectors.groupingBy(JobHistoryEntry::getEmployer, Collectors.summingInt(JobHistoryEntry::getDuration)))
-                        .entrySet().stream()
-                        .map(entry -> new PersonEmployerDuration(employee.getPerson(), entry.getKey(), entry.getValue())))
-                .collect(Collectors.groupingBy(PersonEmployerDuration::getEmployer,
-                        Collectors.mapping(PersonEmployerDuration::getPerson, Collectors.maxBy(Comparator.comparing(PersonEmployerDuration::getDuration)))));
+        // TODO реализация
+        Map<String, Person> result = null;
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
