@@ -9,7 +9,6 @@ import streams.part2.example.data.PersonEmployerDuration;
 import streams.part2.example.data.PersonEmployerPair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
@@ -83,8 +82,8 @@ public class Exercise2 {
         Map<String, Set<Person>> result = employees.stream()
                 .flatMap(employee -> employee.getJobHistory().stream().map(JobHistoryEntry::getEmployer)
                         .map(employer -> new PersonEmployerPair(employee.getPerson(), employer)))
-                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
-                        Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toSet())));
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson, toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -161,8 +160,8 @@ public class Exercise2 {
         Map<String, Set<Person>> result = employees.stream()
                 .map(employee ->
                         new PersonEmployerPair(employee.getPerson(), employee.getJobHistory().get(0).getEmployer()))
-                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
-                        Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toSet())));
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson, toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -188,12 +187,12 @@ public class Exercise2 {
 
         Map<String, Person> result = employees.stream()
                 .flatMap(employee -> employee.getJobHistory().stream()
-                        .collect(Collectors.groupingBy(JobHistoryEntry::getEmployer, Collectors.summingInt(JobHistoryEntry::getDuration)))
+                        .collect(groupingBy(JobHistoryEntry::getEmployer, summingInt(JobHistoryEntry::getDuration)))
                         .entrySet().stream()
                         .map(entry -> new PersonEmployerDuration(employee.getPerson(), entry.getKey(), entry.getValue())))
                 .collect(groupingBy(PersonEmployerDuration::getEmployer,
                         collectingAndThen(
-                                Collectors.maxBy(Comparator.comparingInt(PersonEmployerDuration::getDuration)),
+                                maxBy(Comparator.comparingInt(PersonEmployerDuration::getDuration)),
                                 maxDuration -> maxDuration.orElseThrow(NoSuchElementException::new).getPerson()))
                 );
 
