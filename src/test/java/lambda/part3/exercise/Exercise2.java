@@ -66,7 +66,7 @@ public class Exercise2 {
                                  .map(person -> person.getFirstName() + ' ' + person.getLastName())
                                  .map(String::length)
                                  .getMapped();
-        assertEquals(Arrays.asList(14, 19, 14, 14), lengths);
+        assertEquals(Arrays.asList(14, 19, 14, 15, 14, 16), lengths);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class Exercise2 {
                 .flatMap(Lists::charactersOf)
                 .map(letter -> (int) letter)
                 .getMapped();
-        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "QA"), codes);
+        assertEquals(calcCodes("dev", "dev", "tester", "dev", "dev", "QA", "QA", "dev", "tester", "tester", "QA", "QA", "QA", "dev"), codes);
     }
 
     private static List<Integer> calcCodes(String...strings) {
