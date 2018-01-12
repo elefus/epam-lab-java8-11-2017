@@ -203,17 +203,14 @@ public class Exercise2 {
                          .collect(
                                  groupingBy(
                                          entry -> entry.getKey().getEmployer(),
-                                         maxBy(Comparator.comparingInt(Map.Entry::getValue))
+                                         collectingAndThen(maxBy(Comparator.comparingInt(Map.Entry::getValue)), entr -> entr.get().getKey().getPerson())
                                  )
-                         ).entrySet()
-                         .stream()
-                         .map(e -> new PersonPositionPair(e.getValue().get().getKey().getPerson(), e.getKey()))
-                         .collect(toMap(PersonPositionPair::getPosition, PersonPositionPair::getPerson));
+                         );
 
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
-        expected.put("google", employees.get(1).getPerson());
+        expected.put("google", employees.get(0).getPerson());
         expected.put("yandex", employees.get(2).getPerson());
         expected.put("mail.ru", employees.get(2).getPerson());
         expected.put("T-Systems", employees.get(5).getPerson());
