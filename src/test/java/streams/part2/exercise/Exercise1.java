@@ -16,7 +16,6 @@ public class Exercise1 {
     public void calcTotalYearsSpentInEpam() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
         Long hours = null;
 
         assertEquals(18, hours.longValue());

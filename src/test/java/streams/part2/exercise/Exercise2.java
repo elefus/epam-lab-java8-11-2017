@@ -1,12 +1,20 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
+import lambda.part3.example.Example2;
 import org.junit.Test;
+import streams.part2.example.data.PersonPositionPair;
+import streams.part2.exercise.data.PersonEmployerDuration;
+import streams.part2.exercise.data.PersonEmployerPair;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -76,7 +84,11 @@ public class Exercise2 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .flatMap(Exercise2::employeeToPersonEmployersPairsStream)
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson,
+                                toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -151,7 +163,14 @@ public class Exercise2 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees
+                .stream()
+                .map(employee -> new PersonEmployerPair(employee.getPerson(),
+                        employee.getJobHistory().get(0).getEmployer()))
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson,
+                                toSet())));
+
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -177,6 +196,12 @@ public class Exercise2 {
 
         // TODO реализация
         Map<String, Person> result = null;
+        Map<String, Integer> result2 = employees
+                .stream()
+                .flatMap(Exercise2::employeeToPersonEmployersDurationStream)
+                .collect(groupingBy(PersonEmployerDuration::getEmployer,
+                        summingInt(PersonEmployerDuration::getDuration)));
+        System.out.println(result2);
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
@@ -185,5 +210,20 @@ public class Exercise2 {
         expected.put("mail.ru", employees.get(2).getPerson());
         expected.put("T-Systems", employees.get(5).getPerson());
         assertEquals(expected, result);
+    }
+
+    private static Stream<PersonEmployerPair> employeeToPersonEmployersPairsStream(Employee employee) {
+        return employee.getJobHistory()
+                .stream()
+                .map(JobHistoryEntry::getEmployer)
+                .map(employer -> new PersonEmployerPair(employee.getPerson(), employer));
+    }
+
+    private static Stream<PersonEmployerDuration> employeeToPersonEmployersDurationStream(Employee employee) {
+        return employee.getJobHistory()
+                .stream()
+                .map(jobHistoryEntry -> new PersonEmployerDuration(employee.getPerson(),
+                        jobHistoryEntry.getEmployer(),
+                        jobHistoryEntry.getDuration()));
     }
 }
