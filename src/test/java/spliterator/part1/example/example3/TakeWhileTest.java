@@ -18,6 +18,7 @@ public class TakeWhileTest {
         assertEquals(3, count);
     }
 
+    @Test
     public void takeLessThanDUnsorted() {
         Stream<Character> sourceStream = Stream.of('a', 'd', 'b', 'c', 'e', 'f');
 

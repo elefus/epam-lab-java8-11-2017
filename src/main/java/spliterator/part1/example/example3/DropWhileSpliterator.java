@@ -9,6 +9,7 @@ public class DropWhileSpliterator<T> extends Spliterators.AbstractSpliterator<T>
 
     private final Spliterator<T> source;
     private final Predicate<? super T> predicate;
+    private boolean ifPredicateWasFalseOnce = false;
 
     public DropWhileSpliterator(Spliterator<T> source, Predicate<? super T> predicate) {
         super(source.estimateSize(), source.characteristics());
@@ -18,6 +19,12 @@ public class DropWhileSpliterator<T> extends Spliterators.AbstractSpliterator<T>
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        throw new UnsupportedOperationException();
+        Consumer<T> dropDownAction = t -> {
+            if (ifPredicateWasFalseOnce || !predicate.test(t)) {
+                ifPredicateWasFalseOnce = true;
+                action.accept(t);
+            }
+        };
+        return source.tryAdvance(dropDownAction);
     }
 }

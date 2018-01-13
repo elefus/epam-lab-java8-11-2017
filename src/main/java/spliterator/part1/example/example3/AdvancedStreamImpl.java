@@ -23,33 +23,12 @@ public class AdvancedStreamImpl<T> implements AdvancedStream<T> {
 
     @Override
     public AdvancedStream<T> takeWhile(Predicate<? super T> predicate) {
-        List<T> listFromStream = stream.collect(Collectors.toList());
-        List<T> result = new ArrayList<>(listFromStream.size());
-        for (T t : listFromStream) {
-            if (predicate.test(t)) {
-                result.add(t);
-            } else {
-                break;
-            }
-        }
-        return new AdvancedStreamImpl<>(result.stream());
+        return new AdvancedStreamImpl<>(StreamSupport.stream(new TakeWhileSpliterator<>(stream.spliterator(), predicate), false));
     }
 
     @Override
     public AdvancedStream<T> dropWhile(Predicate<? super T> predicate) {
-        List<T> listFromStream = stream.collect(Collectors.toList());
-        List<T> result = new ArrayList<>(listFromStream.size());
-        Iterator<T> iter = listFromStream.iterator();
-        while (iter.hasNext()) {
-            T elem = iter.next();
-            if (!predicate.test(elem)) {
-                result.add(elem);
-                while (iter.hasNext()) {
-                    result.add(iter.next());
-                }
-            }
-        }
-        return new AdvancedStreamImpl<>(result.stream());
+        return new AdvancedStreamImpl<>(StreamSupport.stream(new DropWhileSpliterator<>(stream.spliterator(), predicate), false));
     }
 
     @Override
