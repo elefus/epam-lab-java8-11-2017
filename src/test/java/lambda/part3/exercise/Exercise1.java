@@ -17,7 +17,7 @@ public class Exercise1 {
     @Test
     public void mapEmployeesToLengthOfTheirFullNames() {
         List<Employee> employees = Example1.getEmployees();
-        List<Integer> lengths = new ArrayList<>();
+        List<Integer> lengths = new ArrayList<>(4);
 
         // TODO функция извлечения полного имени из сотрудника fullNameExtractor: Employee -> String
         Function<Employee, String> fullNameExtractor = employee -> employee.getPerson().getFullName();
