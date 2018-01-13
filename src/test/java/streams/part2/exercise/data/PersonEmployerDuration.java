@@ -25,4 +25,17 @@ public class PersonEmployerDuration {
     public int getDuration() {
         return duration;
     }
+
+    public PersonEmployerPair getPersonEmployerPair() {
+        return new PersonEmployerPair(person, employer);
+    }
+
+    @Override
+    public String toString() {
+        return "PersonEmployerDuration{" +
+                "person=" + person +
+                ", employer='" + employer + '\'' +
+                ", duration=" + duration +
+                '}';
+    }
 }
