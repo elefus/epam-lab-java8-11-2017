@@ -14,43 +14,47 @@ public class FJPSumIntArrayExample {
     @Test
     public void test() {
         int[] data = IntStream.generate(() -> 1)
-                              .limit(100)
-                              .toArray();
+                .limit(100)
+                .toArray();
 
-        // TODO реализация
-        int result = new ForkJoinPool().invoke(new ForkJoinPoolSumArrayTask(data, 0, data.length - 1));
+        int result = new ForkJoinPool().invoke(new ForkJoinSumArrayTask(data, 0, data.length));
         assertEquals(100, result);
     }
 
-    private static class ForkJoinPoolSumArrayTask extends RecursiveTask<Integer>{
+    private static class ForkJoinSumArrayTask extends RecursiveTask<Integer> {
 
-        private static final int SEQUENTIAL_THRESHOLD = 10;
+        private static final int SEQUENTIAL_THRESHOLD = 30;
 
         private int[] data;
         private int fromInclusive;
-        private int toInclusive;
+        private int toExclusive;
 
-        public ForkJoinPoolSumArrayTask(int[] data, int fromInclusive, int toInclusive){
-            this.data = data;
+        public ForkJoinSumArrayTask(int[] data, int fromInclusive, int toExclusive) {
             this.fromInclusive = fromInclusive;
-            this.toInclusive = toInclusive;
+            this.toExclusive = toExclusive;
+            this.data = data;
         }
 
         @Override
         protected Integer compute() {
-            if(toInclusive - fromInclusive < SEQUENTIAL_THRESHOLD){
-
-                return Arrays.stream(data).skip(fromInclusive).limit(toInclusive - fromInclusive + 1).sum();
-
-            } else {
-
-                int pivot = (fromInclusive + toInclusive)/2;
-                FJPSumIntArrayExample.ForkJoinPoolSumArrayTask left = new FJPSumIntArrayExample.ForkJoinPoolSumArrayTask(data, fromInclusive, pivot);
-                left.fork();
-
-                FJPSumIntArrayExample.ForkJoinPoolSumArrayTask right = new FJPSumIntArrayExample.ForkJoinPoolSumArrayTask(data, pivot + 1, toInclusive);
-                return left.join() + right.compute();
+            if (toExclusive - fromInclusive < SEQUENTIAL_THRESHOLD) {
+                return Arrays
+                        .stream(data)
+                        .skip(fromInclusive)
+                        .limit(toExclusive - fromInclusive)
+                        .sum();
             }
+
+            int mid = (fromInclusive + toExclusive) / 2;
+
+            FJPSumIntArrayExample.ForkJoinSumArrayTask left =
+                    new FJPSumIntArrayExample.ForkJoinSumArrayTask(data, fromInclusive, mid);
+
+            left.fork();
+
+            return new FJPSumIntArrayExample
+                    .ForkJoinSumArrayTask(data, mid, toExclusive)
+                    .compute() + left.join();
         }
     }
 }
