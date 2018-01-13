@@ -68,7 +68,6 @@ public class Exercise4 {
     private final List<Employee> employees = Example1.getEmployees();
     @Test
     public void mapEmployeesToCodesOfLetterTheirPositionsUsingLazyFlatMapHelper() {
-
         final List<Integer> codes = LazyFlatMapHelper.from(employees)
                 .flatMap(Employee::getJobHistory)
                 .map(JobHistoryEntry::getPosition)
