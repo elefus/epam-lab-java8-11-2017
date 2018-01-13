@@ -67,7 +67,11 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     public OfInt trySplit() {
         long halfQuantity = findNumberOfElements(first, last) / 2L;
         Coordinate initialFirst = new Coordinate(data, first.line, first.column);
-        for (int i = 1; i < halfQuantity; i++) first.moveToNext();
+
+        for (int i = 1; i < halfQuantity; i++){
+            first.moveToNext();
+        }
+
         OfInt result = new RectangleSpliterator(data, initialFirst, new Coordinate(data, first.line, first.column));
         first.moveToNext();
         return result;
@@ -80,7 +84,11 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
     @Override
     public boolean tryAdvance(IntConsumer action) {
-        if (first.exceeds(last)) return false;
+
+        if (first.exceeds(last)){
+            return false;
+        }
+
         action.accept(data[first.line][first.column]);
         first.moveToNext();
         return true;
@@ -93,11 +101,20 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     }
 
     private static long findNumberOfElements(Coordinate first, Coordinate last) {
-        if (first.line > last.line) return 0L;
-        if (first.line == last.line) return first.column <= last.column ? (last.column - first.column + 1) : 0L;
+
+        if (first.line > last.line){
+            return 0L;
+        } else if (first.line == last.line){
+            return first.column <= last.column ? (last.column - first.column + 1) : 0L;
+        }
+
         int[][] array = first.getData();
         long number = array[first.line].length - first.column + last.column + 1;
-        for (int i = first.line + 1; i < last.line; i++) number += array[i].length;
+
+        for (int i = first.line + 1; i < last.line; i++){
+            number += array[i].length;
+        }
+
         return number;
     }
 }
