@@ -20,10 +20,10 @@ public class Exercise1 {
 
 
         // TODO функция извлечения полного имени из сотрудника fullNameExtractor: Employee -> String
-        Function<Employee, String> fullNameExtractor = employee -> employee.getPerson().getFirstName() + " " + employee.getPerson().getLastName();
+        Function<Employee, String> fullNameExtractor = employee -> employee.getPerson().getFullName();
 
         // TODO функция извлечения длины из строки stringLengthExtractor: String -> Integer
-        Function<String, Integer> stringLengthExtractor = string -> string.length();
+        Function<String, Integer> stringLengthExtractor = String::length;
 
         // TODO функция извлечения длины полного имени из сотрудника fullNameLengthExtractor: Employee -> Integer
         Function<Employee, Integer> fullNameLengthExtractor = fullNameExtractor.andThen(stringLengthExtractor);
