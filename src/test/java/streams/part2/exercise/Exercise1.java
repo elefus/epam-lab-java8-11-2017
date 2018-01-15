@@ -1,11 +1,13 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,8 +18,10 @@ public class Exercise1 {
     public void calcTotalYearsSpentInEpam() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Long hours = null;
+        Long hours = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream())
+                .filter(jobHistoryEntry -> jobHistoryEntry.getEmployer().equals("EPAM"))
+                .mapToLong(JobHistoryEntry::getDuration).sum();
 
         assertEquals(18, hours.longValue());
     }
@@ -26,8 +30,10 @@ public class Exercise1 {
     public void findPersonsWithQaExperience() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Set<Person> workedAsQa = null;
+        Set<Person> workedAsQa = employees.stream()
+                .filter(employee -> employee.getJobHistory().stream()
+                        .anyMatch(jobHistoryEntry -> jobHistoryEntry.getPosition().equals("QA")))
+                .map(Employee::getPerson).collect(Collectors.toSet());
 
         Set<Person> expected = new HashSet<>(Arrays.asList(
                 employees.get(2).getPerson(),
@@ -41,15 +47,15 @@ public class Exercise1 {
     public void composeFullNamesOfEmployeesUsingLineSeparatorAsDelimiter() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        String result = null;
+        String result = employees.stream().map(employee -> employee.getPerson().getFullName())
+                .collect(Collectors.joining("\n"));
 
         String expected = "Иван Мельников\n"
-                        + "Александр Дементьев\n"
-                        + "Дмитрий Осинов\n"
-                        + "Анна Светличная\n"
-                        + "Игорь Толмачёв\n"
-                        + "Иван Александров";
+                + "Александр Дементьев\n"
+                + "Дмитрий Осинов\n"
+                + "Анна Светличная\n"
+                + "Игорь Толмачёв\n"
+                + "Иван Александров";
         assertEquals(expected, result);
     }
 
@@ -57,8 +63,18 @@ public class Exercise1 {
     public void groupPersonsByFirstPositionUsingToMap() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .collect(Collectors.toMap(
+                        employee -> employee.getJobHistory().get(0).getPosition(),
+                        employee -> {
+                            Set<Person> temp = new HashSet<>();
+                            temp.add(employee.getPerson());
+                            return temp;
+                        },
+                        (set1, set2) -> {
+                            set1.addAll(set2);
+                            return set1;
+                        }));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("dev", Collections.singleton(employees.get(0).getPerson()));
@@ -75,8 +91,9 @@ public class Exercise1 {
     public void groupPersonsByFirstPositionUsingGroupingByCollector() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream().collect(Collectors.groupingBy(
+                employee -> employee.getJobHistory().get(0).getPosition(),
+                Collectors.mapping(Employee::getPerson, Collectors.toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("dev", Collections.singleton(employees.get(0).getPerson()));
