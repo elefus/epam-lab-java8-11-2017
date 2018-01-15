@@ -53,9 +53,8 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         Set<String> companies = employees.stream()
-                .flatMap(employee -> employee.getJobHistory().stream()
-                        .map(JobHistoryEntry::getEmployer).collect(Collectors.toList()).stream())
-                .distinct().collect(Collectors.toSet());
+                .flatMap(employee -> employee.getJobHistory().stream().map(JobHistoryEntry::getEmployer))
+                .collect(Collectors.toSet());
 
         Set<String> expected = new HashSet<>();
         expected.add("EPAM");
