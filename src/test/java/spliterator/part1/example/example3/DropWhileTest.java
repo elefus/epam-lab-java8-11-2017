@@ -12,7 +12,7 @@ public class DropWhileTest {
     public void dropLessThanC() {
         Stream<Character> sourceStream = Stream.of('a', 'b', 'c', 'd', 'e', 'f', 'g');
 
-        long count = new AdvancedStreamImpl<>(sourceStream).dropWhile(elem -> elem < 'c')
+        long count = new AdvancedStreamImpl<>(sourceStream).dropWhile(elem -> elem < 'd')
                                                            .count();
 
         assertEquals(4, count);

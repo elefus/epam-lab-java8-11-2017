@@ -18,6 +18,8 @@ public class TakeWhileSpliterator<T> extends Spliterators.AbstractSpliterator<T>
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        throw new UnsupportedOperationException();
+        return source.tryAdvance(t -> {
+            if (predicate.test(t)) action.accept(t);
+        });
     }
 }
