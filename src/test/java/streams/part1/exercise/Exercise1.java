@@ -6,7 +6,9 @@ import lambda.part3.example.Example1;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,9 +49,15 @@ public class Exercise1 {
         List<Employee> employees = Example1.getEmployees();
 
         // TODO реализация
-        List<String> companies = null;
+        Set<String> companies = null;
 
-        assertEquals(Arrays.asList("EPAM", "google", "yandex", "mail.ru", "T-Systems"), companies);
+        Set<String> expected = new HashSet<>();
+        expected.add("EPAM");
+        expected.add("google");
+        expected.add("yandex");
+        expected.add("mail.ru");
+        expected.add("T-Systems");
+        assertEquals(expected, companies);
     }
 
     @Test
