@@ -1,12 +1,16 @@
 package streams.part2.exercise;
 
 import lambda.data.Employee;
+import lambda.data.JobHistoryEntry;
 import lambda.data.Person;
 import lambda.part3.example.Example1;
 import org.junit.Test;
+import streams.part2.example.data.PersonEmployerDuration;
+import streams.part2.example.data.PersonEmployerPair;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -75,8 +79,11 @@ public class Exercise2 {
     public void employersStuffList() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream().map(JobHistoryEntry::getEmployer)
+                        .map(employer -> new PersonEmployerPair(employee.getPerson(), employer)))
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson, toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -150,8 +157,11 @@ public class Exercise2 {
     public void indexByFirstEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Set<Person>> result = null;
+        Map<String, Set<Person>> result = employees.stream()
+                .map(employee ->
+                        new PersonEmployerPair(employee.getPerson(), employee.getJobHistory().get(0).getEmployer()))
+                .collect(groupingBy(PersonEmployerPair::getEmployer,
+                        mapping(PersonEmployerPair::getPerson, toSet())));
 
         Map<String, Set<Person>> expected = new HashMap<>();
         expected.put("EPAM", new HashSet<>(Arrays.asList(
@@ -175,8 +185,16 @@ public class Exercise2 {
     public void greatestExperiencePerEmployer() {
         List<Employee> employees = Example1.getEmployees();
 
-        // TODO реализация
-        Map<String, Person> result = null;
+        Map<String, Person> result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .collect(groupingBy(JobHistoryEntry::getEmployer, summingInt(JobHistoryEntry::getDuration)))
+                        .entrySet().stream()
+                        .map(entry -> new PersonEmployerDuration(employee.getPerson(), entry.getKey(), entry.getValue())))
+                .collect(groupingBy(PersonEmployerDuration::getEmployer,
+                        collectingAndThen(
+                                maxBy(Comparator.comparingInt(PersonEmployerDuration::getDuration)),
+                                maxDuration -> maxDuration.orElseThrow(NoSuchElementException::new).getPerson()))
+                );
 
         Map<String, Person> expected = new HashMap<>();
         expected.put("EPAM", employees.get(4).getPerson());
