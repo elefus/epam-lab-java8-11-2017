@@ -71,8 +71,8 @@ public class Exercise2 {
         Predicate<Person> personHasEmptyFirstName = person -> person.getFirstName().isEmpty();
         Predicate<Person> personHasEmptyLastName = person -> person.getLastName().isEmpty();
 
-        Predicate<Person> personHasNotEmptyFirstName = negate(personHasEmptyFirstName);
-        Predicate<Person> personHasNotEmptyLastName = negate(personHasEmptyLastName);
+        Predicate<Person> personHasNotEmptyFirstName = personHasEmptyFirstName.negate();
+        Predicate<Person> personHasNotEmptyLastName = personHasEmptyLastName.negate();
 
         Predicate<Person> personHasNotEmptyLastNameAndFirstName = and(personHasNotEmptyFirstName,personHasNotEmptyLastName);
 
